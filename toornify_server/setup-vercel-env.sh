@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Script to add environment variables to Vercel
+# Run this script to add all environment variables from your .env file
+
+echo "🚀 Setting up environment variables for Vercel deployment"
+echo ""
+echo "You can add environment variables in two ways:"
+echo ""
+echo "Option 1: Via Vercel Dashboard (Recommended)"
+echo "  1. Visit: https://vercel.com/anantmann9057s-projects/toornify-server/settings/environment-variables"
+echo "  2. Add each variable from your .env file"
+echo "  3. Select 'Production', 'Preview', and 'Development' environments"
+echo ""
+echo "Option 2: Via CLI (add one by one)"
+echo "  Run these commands and paste the value when prompted:"
+echo ""
+echo "  vercel env add ACCESS_TOKEN_SECRET production"
+echo "  vercel env add ACCESS_TOKEN_EXPIRY production"
+echo "  vercel env add REFRESH_TOKEN_SECRET production"
+echo "  vercel env add REFRESH_TOKEN_EXPIRY production"
+echo "  vercel env add DB_URL production"
+echo "  vercel env add DB_NAME production"
+echo "  vercel env add CLOUDINARY_API_KEY production"
+echo "  vercel env add CLOUDINARY_CLOUD_NAME production"
+echo "  vercel env add CLOUDINARY_SECRET_KEY production"
+echo "  vercel env add CLOUDINARY_URL production"
+echo "  vercel env add CORS_ORIGIN production"
+echo "  vercel env add PORT production"
+echo "  vercel env add NODE_ENV production"
+echo ""
+echo "After adding all variables, redeploy with: vercel --prod"
+echo ""
+echo "⚠️  IMPORTANT: Socket.IO may not work on Vercel due to serverless limitations"
+echo "   Consider deploying the Socket.IO server separately on Railway or Render"
+

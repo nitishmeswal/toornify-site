@@ -1,0 +1,877 @@
+{
+	"info": {
+		"_postman_id": "toornify-complete-api-2024",
+		"name": "Toornify API - Complete Collection",
+		"description": "Complete API collection for Toornify Tournament Management System",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Sign Up",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200 || pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.data && jsonData.data.token) {",
+									"        pm.collectionVariables.set(\"token\", jsonData.data.token);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"testuser\",\n    \"email\": \"testuser@example.com\",\n    \"password\": \"password123\",\n    \"fullname\": \"Test User\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/signup",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"signup"
+							]
+						},
+						"description": "Register a new user account"
+					},
+					"response": []
+				},
+				{
+					"name": "Sign In",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.data && jsonData.data.token) {",
+									"        pm.collectionVariables.set(\"token\", jsonData.data.token);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"testuser@example.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/signin",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"signin"
+							]
+						},
+						"description": "Login to existing account"
+					},
+					"response": []
+				},
+				{
+					"name": "Sign Out",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/auth/signout",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"signout"
+							]
+						},
+						"description": "Logout from current session"
+					},
+					"response": []
+				}
+			],
+			"description": "User authentication endpoints"
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Get User Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/user-details?email=testuser@example.com",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"user-details"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "testuser@example.com"
+								}
+							]
+						},
+						"description": "Get user details by email"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Profile",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"testuser@example.com\",\n    \"username\": \"updateduser\",\n    \"fullname\": \"Updated User Name\",\n    \"bio\": \"This is my bio\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/update-profile",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"update-profile"
+							]
+						},
+						"description": "Update user profile information"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Address",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"street\": \"123 Main St\",\n    \"city\": \"New York\",\n    \"state\": \"NY\",\n    \"country\": \"USA\",\n    \"zipCode\": \"10001\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/update-address",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"update-address"
+							]
+						},
+						"description": "Update user address (requires authentication)"
+					},
+					"response": []
+				}
+			],
+			"description": "User management endpoints"
+		},
+		{
+			"name": "Tournaments",
+			"item": [
+				{
+					"name": "Get All Tournaments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tournaments/getTournaments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tournaments",
+								"getTournaments"
+							]
+						},
+						"description": "Retrieve all tournaments"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Tournament By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tournaments/getTournamentById/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tournaments",
+								"getTournamentById",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "6969f445ecc201abc4d82598",
+									"description": "Tournament ID"
+								}
+							]
+						},
+						"description": "Get tournament details by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Tournament",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tournamentName\": \"Test Tournament\",\n    \"organizerEmail\": \"testuser@example.com\",\n    \"gameType\": \"SOLO\",\n    \"gameId\": \"68b41df60cd234fdc29b3afe\",\n    \"tournamentFormat\": \"single_elimination\",\n    \"registrationEndDate\": \"2026-03-01T00:00:00.000Z\",\n    \"tournamentStartDate\": \"2026-03-05T00:00:00.000Z\",\n    \"tournamentEndDate\": \"2026-03-10T00:00:00.000Z\",\n    \"maxTeamMembers\": 1,\n    \"minTeamMembers\": 1,\n    \"maxTeams\": 16,\n    \"minTeams\": 4,\n    \"tournamentVisibility\": \"public\",\n    \"prizeConfig\": [\n        {\n            \"position\": 1,\n            \"amount\": \"1000\",\n            \"currency\": \"USD\"\n        },\n        {\n            \"position\": 2,\n            \"amount\": \"500\",\n            \"currency\": \"USD\"\n        },\n        {\n            \"position\": 3,\n            \"amount\": \"250\",\n            \"currency\": \"USD\"\n        }\n    ],\n    \"sponsors\": [\"Sponsor 1\", \"Sponsor 2\"],\n    \"rules\": [\"Rule 1\", \"Rule 2\"],\n    \"selectedPlatform\": \"PC\",\n    \"selectedTimezone\": \"UTC\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/tournaments/createTournament",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tournaments",
+								"createTournament"
+							]
+						},
+						"description": "Create a new tournament"
+					},
+					"response": []
+				},
+				{
+					"name": "Register For Tournament",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tournamentId\": \"6969f445ecc201abc4d82598\",\n    \"teamId\": \"69102ed64c96634a04076558\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/tournaments/registerForTournament",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tournaments",
+								"registerForTournament"
+							]
+						},
+						"description": "Register a team for a tournament"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Visibility",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tournamentId\": \"6969f445ecc201abc4d82598\",\n    \"visibility\": \"private\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/tournaments/updateVisibility",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tournaments",
+								"updateVisibility"
+							]
+						},
+						"description": "Update tournament visibility (public/private)"
+					},
+					"response": []
+				}
+			],
+			"description": "Tournament management endpoints"
+		},
+		{
+			"name": "Brackets",
+			"item": [
+				{
+					"name": "Get All Brackets",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/brackets/getBrackets",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"brackets",
+								"getBrackets"
+							]
+						},
+						"description": "Retrieve all brackets"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Bracket By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/brackets/getBracketById/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"brackets",
+								"getBracketById",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "6969fe4fe4b8e1c26caf338a",
+									"description": "Bracket ID"
+								}
+							]
+						},
+						"description": "Get bracket details by ID with populated team data"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Bracket",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tournament_id\": \"6969f445ecc201abc4d82598\",\n    \"tournament_name\": \"Test Tournament\",\n    \"format\": \"single_elimination\",\n    \"consolationFinal\": false,\n    \"grandFinalType\": \"simple\",\n    \"teams\": [\n        \"69102ed64c96634a04076558\",\n        \"6910387ff5a749108a70f61b\",\n        \"691038bf5ce9ed762491c339\",\n        \"691038f2f5a749108a70f62b\"\n    ],\n    \"userEmail\": \"testuser@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/brackets/createBracket",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"brackets",
+								"createBracket"
+							]
+						},
+						"description": "Create a new tournament bracket"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Match",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"winner\": \"69102ed64c96634a04076558\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/brackets/updateMatch/:bracketId/:matchIndex",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"brackets",
+								"updateMatch",
+								":bracketId",
+								":matchIndex"
+							],
+							"variable": [
+								{
+									"key": "bracketId",
+									"value": "6969fe4fe4b8e1c26caf338a",
+									"description": "Bracket ID"
+								},
+								{
+									"key": "matchIndex",
+									"value": "0",
+									"description": "Match Index"
+								}
+							]
+						},
+						"description": "Update match winner and auto-advance to next round"
+					},
+					"response": []
+				},
+				{
+					"name": "Reorder Teams",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"from\": {\n        \"matchIndex\": 0,\n        \"position\": \"team1\"\n    },\n    \"to\": {\n        \"matchIndex\": 1,\n        \"position\": \"team2\"\n    },\n    \"team\": \"69102ed64c96634a04076558\",\n    \"replacedTeam\": \"6910387ff5a749108a70f61b\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/brackets/reorder/:bracketId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"brackets",
+								"reorder",
+								":bracketId"
+							],
+							"variable": [
+								{
+									"key": "bracketId",
+									"value": "6969fe4fe4b8e1c26caf338a",
+									"description": "Bracket ID"
+								}
+							]
+						},
+						"description": "Reorder teams in bracket matches"
+					},
+					"response": []
+				}
+			],
+			"description": "Bracket management endpoints"
+		},
+		{
+			"name": "Teams",
+			"item": [
+				{
+					"name": "Get All Teams",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/teams/getTeams",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"teams",
+								"getTeams"
+							]
+						},
+						"description": "Retrieve all teams"
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Teams",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/teams/fetchUserTeams",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"teams",
+								"fetchUserTeams"
+							]
+						},
+						"description": "Get teams owned by authenticated user"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Team",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"teamname\": \"Test Team\",\n    \"game\": \"68b41df60cd234fdc29b3afe\",\n    \"players\": [\n        \"6890a85f84b09d6c9c343ea8\",\n        \"6890ac22325ae07bc793c899\"\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/teams/createTeam",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"teams",
+								"createTeam"
+							]
+						},
+						"description": "Create a new team (requires authentication)"
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Team Logo",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "team_logo",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/teams/uploadTeamLogo",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"teams",
+								"uploadTeamLogo"
+							]
+						},
+						"description": "Upload team logo image"
+					},
+					"response": []
+				}
+			],
+			"description": "Team management endpoints"
+		},
+		{
+			"name": "Games",
+			"item": [
+				{
+					"name": "Get All Games",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/games/getGames",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"games",
+								"getGames"
+							]
+						},
+						"description": "Retrieve all available games"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Game By ID",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"gameId\": \"68b41df60cd234fdc29b3afe\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/games/getGameById",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"games",
+								"getGameById"
+							]
+						},
+						"description": "Get game details by ID"
+					},
+					"response": []
+				}
+			],
+			"description": "Game catalog endpoints"
+		},
+		{
+			"name": "Players",
+			"item": [
+				{
+					"name": "Get All Players",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/players",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"players"
+							]
+						},
+						"description": "Retrieve all players"
+					},
+					"response": []
+				}
+			],
+			"description": "Player endpoints"
+		},
+		{
+			"name": "Chat",
+			"item": [
+				{
+					"name": "Send Message",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"room\": \"tournament_123\",\n    \"sender\": \"testuser@example.com\",\n    \"message\": \"Hello everyone!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/chat/message",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"chat",
+								"message"
+							]
+						},
+						"description": "Send a chat message to a room"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Chat History",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/chat/history/:room",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"chat",
+								"history",
+								":room"
+							],
+							"variable": [
+								{
+									"key": "room",
+									"value": "tournament_123",
+									"description": "Room ID"
+								}
+							]
+						},
+						"description": "Get chat history for a specific room"
+					},
+					"response": []
+				}
+			],
+			"description": "Chat messaging endpoints"
+		},
+		{
+			"name": "News",
+			"item": [
+				{
+					"name": "Get News",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/news/getNews",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"news",
+								"getNews"
+							]
+						},
+						"description": "Retrieve latest news"
+					},
+					"response": []
+				}
+			],
+			"description": "News endpoints"
+		},
+		{
+			"name": "Health Check",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/health",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"health"
+							]
+						},
+						"description": "Check server and database health status"
+					},
+					"response": []
+				}
+			],
+			"description": "Server health check"
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
+

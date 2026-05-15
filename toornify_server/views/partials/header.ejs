@@ -1,0 +1,160 @@
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+  integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+  crossorigin="anonymous"
+/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="/socket.io/socket.io.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<style>
+  :root {
+    --primary-neon: #00ff88;
+    --secondary-neon: #ff00ff;
+    --accent-blue: #00d4ff;
+    --dark-bg: #0a0a0f;
+    --card-bg: #1a1a2e;
+  }
+
+  body {
+    background: var(--dark-bg);
+    color: #fff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .gaming-navbar {
+    background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
+    border-bottom: 2px solid var(--primary-neon);
+    box-shadow: 0 4px 20px rgba(0, 255, 136, 0.3);
+    backdrop-filter: blur(10px);
+  }
+
+  .navbar-brand {
+    font-size: 1.8rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    background: linear-gradient(45deg, var(--primary-neon), var(--accent-blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+    transition: all 0.3s ease;
+  }
+
+  .navbar-brand:hover {
+    transform: scale(1.05);
+    filter: brightness(1.2);
+  }
+
+  .nav-link {
+    color: #fff !important;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 0.5rem 1.2rem !important;
+    margin: 0 0.3rem;
+    position: relative;
+    transition: all 0.3s ease;
+  }
+
+  .nav-link:before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary-neon), var(--accent-blue));
+    transform: translateX(-50%);
+    transition: width 0.3s ease;
+  }
+
+  .nav-link:hover:before,
+  .nav-link.active:before {
+    width: 80%;
+  }
+
+  .nav-link:hover {
+    color: var(--primary-neon) !important;
+    text-shadow: 0 0 10px var(--primary-neon);
+  }
+
+  .btn-gaming {
+    background: linear-gradient(45deg, var(--primary-neon), var(--accent-blue));
+    border: none;
+    color: #0a0a0f;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 0.6rem 1.5rem;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+  }
+
+  .btn-gaming:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 30px rgba(0, 255, 136, 0.8);
+    color: #0a0a0f;
+  }
+
+  .btn-outline-gaming {
+    border: 2px solid var(--primary-neon);
+    color: var(--primary-neon);
+    background: transparent;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 0.5rem 1.5rem;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+  }
+
+  .btn-outline-gaming:hover {
+    background: var(--primary-neon);
+    color: #0a0a0f;
+    box-shadow: 0 0 20px var(--primary-neon);
+    transform: translateY(-2px);
+  }
+
+  .navbar-toggler {
+    border-color: var(--primary-neon);
+  }
+
+  .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%2300ff88' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+  }
+
+  .search-box {
+    position: relative;
+    background: rgba(26, 26, 46, 0.6);
+    border: 1px solid var(--primary-neon);
+    border-radius: 25px;
+    overflow: hidden;
+  }
+
+  .search-box input {
+    background: transparent;
+    border: none;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    outline: none;
+  }
+
+  .search-box input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .icon-glow {
+    color: var(--primary-neon);
+    filter: drop-shadow(0 0 5px var(--primary-neon));
+  }
+
+  @media (max-width: 991px) {
+    .navbar-collapse {
+      background: rgba(26, 26, 46, 0.95);
+      border-radius: 10px;
+      margin-top: 1rem;
+      padding: 1rem;
+    }
+  }
+</style>
+

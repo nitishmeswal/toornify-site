@@ -1,0 +1,110 @@
+{
+  "info": {
+    "name": "Toornify Tournaments API",
+    "description": "Complete API collection for Toornify Tournament management",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Tournament",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tournamentName\": \"BGMI Championship 2025\",\n  \"selectedPlatform\": \"Mobile\",\n  \"selectedTimezone\": \"Asia/Kolkata\",\n  \"tournamentFormat\": \"Battle Royale\",\n  \"registrationEndDate\": \"2025-01-15T23:59:59.000Z\",\n  \"tournamentStartDate\": \"2025-01-20T10:00:00.000Z\",\n  \"tournamentEndDate\": \"2025-01-25T18:00:00.000Z\",\n  \"maxTeamMembers\": 4,\n  \"minTeamMembers\": 4,\n  \"maxTeams\": 100,\n  \"minTeams\": 16,\n  \"tournamentVisibility\": \"public\",\n  \"gameType\": \"SQUAD\",\n  \"game\": \"BGMI\",\n  \"gameImage\": \"https://example.com/images/bgmi-banner.jpg\",\n  \"rules\": [\n    \"No cheating or hacking allowed\",\n    \"All players must be present 15 minutes before match time\",\n    \"Teams must have registered IGN (In-Game Name)\",\n    \"Follow fair play rules\"\n  ],\n  \"sponsors\": [\n    {\n      \"name\": \"Red Bull\",\n      \"logo\": \"https://example.com/sponsors/redbull.png\",\n      \"website\": \"https://redbull.com\"\n    },\n    {\n      \"name\": \"Logitech\",\n      \"logo\": \"https://example.com/sponsors/logitech.png\",\n      \"website\": \"https://logitech.com\"\n    }\n  ],\n  \"email\": \"user@example.com\",\n  \"prizeConfig\": [\n    {\n      \"position\": 1,\n      \"prize\": \"₹50,000\",\n      \"description\": \"First Prize\"\n    },\n    {\n      \"position\": 2,\n      \"prize\": \"₹30,000\",\n      \"description\": \"Second Prize\"\n    },\n    {\n      \"position\": 3,\n      \"prize\": \"₹20,000\",\n      \"description\": \"Third Prize\"\n    }\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{BASE_URL}}/api/v1/tournaments/createTournament",
+          "host": ["{{BASE_URL}}"],
+          "path": ["api", "v1", "tournaments", "createTournament"]
+        },
+        "description": "Create a new tournament. Requires organizer email to exist in UserModel and game name to exist in Games collection."
+      },
+      "response": []
+    },
+    {
+      "name": "Get All Tournaments",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{BASE_URL}}/api/v1/tournaments/getTournaments",
+          "host": ["{{BASE_URL}}"],
+          "path": ["api", "v1", "tournaments", "getTournaments"]
+        },
+        "description": "Retrieve all tournaments from the database."
+      },
+      "response": []
+    },
+    {
+      "name": "Get Tournament By ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{BASE_URL}}/api/v1/tournaments/getTournamentById/:id",
+          "host": ["{{BASE_URL}}"],
+          "path": ["api", "v1", "tournaments", "getTournamentById", ":id"],
+          "variable": [
+            {
+              "key": "id",
+              "value": "675d8f1a2b3c4d5e6f7g8h9i",
+              "description": "Tournament MongoDB ObjectID"
+            }
+          ]
+        },
+        "description": "Get tournament details by ID with populated organizer and game information."
+      },
+      "response": []
+    },
+    {
+      "name": "Create Tournament (Minimal)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tournamentName\": \"Quick Test Tournament\",\n  \"selectedPlatform\": \"Mobile\",\n  \"selectedTimezone\": \"UTC\",\n  \"tournamentFormat\": \"Single Elimination\",\n  \"registrationEndDate\": \"2025-12-20T23:59:59.000Z\",\n  \"tournamentStartDate\": \"2025-12-25T10:00:00.000Z\",\n  \"tournamentEndDate\": \"2025-12-30T18:00:00.000Z\",\n  \"maxTeamMembers\": 1,\n  \"minTeamMembers\": 1,\n  \"maxTeams\": 16,\n  \"minTeams\": 8,\n  \"tournamentVisibility\": \"public\",\n  \"gameType\": \"SOLO\",\n  \"game\": \"BGMI\",\n  \"gameImage\": \"https://example.com/game.jpg\",\n  \"rules\": [\"Be respectful\"],\n  \"sponsors\": [],\n  \"email\": \"organizer@example.com\",\n  \"prizeConfig\": []\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{BASE_URL}}/api/v1/tournaments/createTournament",
+          "host": ["{{BASE_URL}}"],
+          "path": ["api", "v1", "tournaments", "createTournament"]
+        },
+        "description": "Create a tournament with minimal required fields for quick testing."
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ]
+}
+

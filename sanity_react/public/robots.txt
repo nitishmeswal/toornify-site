@@ -1,0 +1,20 @@
+# Robots.txt for Toornify
+# Allow all crawlers to access all content
+
+User-agent: *
+Allow: /
+
+# Disallow private areas
+Disallow: /api/
+Disallow: /admin/
+Disallow: /dashboard/private/
+
+# Sitemap location
+Sitemap: https://sanity-react-one.vercel.app/sitemap.xml
+
+# Crawl-delay for specific bots (optional)
+User-agent: Googlebot
+Crawl-delay: 0
+
+User-agent: Bingbot
+Crawl-delay: 1

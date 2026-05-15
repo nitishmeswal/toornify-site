@@ -1,0 +1,174 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    margin: 0;
+    min-height: 100vh;
+  }
+}
+
+/* ============================================
+   NEON GLOW BORDER - Esports Blog Cards
+   Rotating conic-gradient halo + pulsing glow
+   ============================================ */
+@property --neon-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes neon-rotate {
+  to { --neon-angle: 360deg; }
+}
+
+@keyframes neon-pulse {
+  0%, 100% { opacity: 0.55; filter: blur(14px); }
+  50%      { opacity: 1;    filter: blur(22px); }
+}
+
+.neon-card {
+  position: relative;
+  isolation: isolate;
+  border-radius: 0.75rem;
+  background: linear-gradient(180deg, #1f1a2e 0%, #18152a 100%);
+}
+
+/* Rotating conic gradient ring (the "circling light") */
+.neon-card::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  padding: 2px;
+  background: conic-gradient(
+    from var(--neon-angle),
+    transparent 0deg,
+    #8b5cf6 60deg,
+    #d946ef 120deg,
+    #06b6d4 180deg,
+    #8b5cf6 240deg,
+    transparent 300deg,
+    transparent 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+          mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Outer pulsing halo glow */
+.neon-card::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--neon-angle),
+    transparent 0deg,
+    rgba(139, 92, 246, 0.6) 60deg,
+    rgba(217, 70, 239, 0.6) 120deg,
+    rgba(6, 182, 212, 0.6) 180deg,
+    rgba(139, 92, 246, 0.6) 240deg,
+    transparent 300deg
+  );
+  filter: blur(18px);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.neon-card.is-active::before,
+.neon-card:hover::before {
+  opacity: 1;
+  animation: neon-rotate 4s linear infinite;
+}
+
+.neon-card.is-active::after,
+.neon-card:hover::after {
+  opacity: 0.85;
+  animation:
+    neon-rotate 4s linear infinite,
+    neon-pulse 2.4s ease-in-out infinite;
+}
+
+/* Smooth grid-rows collapse (no JS height measuring needed) */
+.collapse-grid {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.collapse-grid.is-open {
+  grid-template-rows: 1fr;
+}
+.collapse-grid > .collapse-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .neon-card::before,
+  .neon-card::after { animation: none !important; }
+  .collapse-grid { transition: none; }
+}

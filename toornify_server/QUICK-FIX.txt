@@ -1,0 +1,52 @@
+╔═══════════════════════════════════════════════════════════════════╗
+║                  DISCORD OAUTH - QUICK FIX                        ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+❌ ERROR: invalid_client
+✅ SOLUTION: Reset your Discord Client Secret
+
+┌───────────────────────────────────────────────────────────────────┐
+│ 1. OPEN DISCORD PORTAL                                            │
+│    https://discord.com/developers/applications/1413402774544191568│
+│                                                                   │
+│ 2. GO TO: OAuth2 → General                                        │
+│                                                                   │
+│ 3. CLICK: "Reset Secret" button                                   │
+│                                                                   │
+│ 4. COPY: The new secret (you only see it once!)                   │
+│                                                                   │
+│ 5. UPDATE: .env file line 32                                      │
+│    DISCORD_CLIENT_SECRET=YOUR_NEW_SECRET                          │
+│                                                                   │
+│ 6. VERIFY: Run test script                                        │
+│    node test-discord-credentials.js                               │
+│                                                                   │
+│ 7. RESTART: Server                                                │
+│    npm start                                                      │
+│                                                                   │
+│ 8. TEST: Open in browser                                          │
+│    http://localhost:8002/api/v1/auth/discord                      │
+└───────────────────────────────────────────────────────────────────┘
+
+ALSO CHECK:
+□ Redirect URI added: http://localhost:8002/api/v1/auth/discord/callback
+□ No spaces/quotes in .env
+□ Save changes in Discord Portal
+
+FILES CREATED FOR YOU:
+✓ test-discord-credentials.js - Test your credentials
+✓ ACTION-REQUIRED.md - Detailed instructions
+✓ FIX-INVALID-CLIENT.md - Troubleshooting guide
+
+VERIFICATION TEST:
+Before starting server, run:
+  node test-discord-credentials.js
+
+Should show:
+  ✓ Discord API accepted your credentials!
+  SUCCESS! Your credentials are working!
+
+ESTIMATED TIME: 2 minutes
+
+═══════════════════════════════════════════════════════════════════
+
