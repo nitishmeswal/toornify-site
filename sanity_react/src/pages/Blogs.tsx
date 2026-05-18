@@ -1,411 +1,309 @@
+import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { BookOpen, Calendar, User, ArrowRight, ChevronDown, Clock, Zap } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { Loader } from "@/components/ui/Loader";
-import { useNavigate } from "react-router-dom";
-import { BackgroundEffects } from "@/components/BackgroundEffects";
+import { Link } from "react-router-dom";
+import { Search, ArrowRight, ChevronLeft, ChevronRight, BookOpen, Calendar } from "lucide-react";
 import SEO from "@/components/SEO";
-import { sanityService, type SanityBlogPost } from "@/lib/services/sanity.service";
-import { urlFor } from "@/lib/sanity-client";
-import { getCharacterAvatar } from "@/lib/utils";
-import { useState, useEffect } from "react";
-import { useIsMobile } from "@/hooks/useMediaQuery";
 
-interface BlogPost {
-  id: string;
-  slug: string;
+interface Article {
+  id: number;
   title: string;
   excerpt: string;
-  author: string;
   date: string;
-  dateLabel: string;
   category: string;
+  image: string;
   featured?: boolean;
-  image?: string;
-  readTime: string;
 }
 
+const CATEGORIES = [
+  { key: "all",       label: "All Articles",      count: 32 },
+  { key: "platform",  label: "Platform Updates",  count: 8 },
+  { key: "esports",   label: "Esports News",      count: 10 },
+  { key: "organizer", label: "Organizer Tips",    count: 7 },
+  { key: "player",    label: "Player Guide",      count: 5 },
+  { key: "community", label: "Community Stories", count: 2 },
+];
+
+const ARTICLES: Article[] = [
+  {
+    id: 1,
+    title: "The Future of Esports Tournaments: Trends to Watch in 2025",
+    excerpt: "Explore the key trends shaping the future of esports gaming and how Toornify is leading the way.",
+    date: "May 14, 2025",
+    category: "Featured",
+    image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1400&q=80",
+    featured: true,
+  },
+  {
+    id: 2,
+    title: "Introducing Advanced Brackets",
+    excerpt: "Smarter seeding, automatic match progression, and real-time updates.",
+    date: "May 12, 2025",
+    category: "Platform Updates",
+    image: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=900&q=80",
+  },
+  {
+    id: 3,
+    title: "How to Organize a Successful Online Tournament",
+    excerpt: "A step-by-step guide for first-time tournament organizers.",
+    date: "May 10, 2025",
+    category: "Organizer Tips",
+    image: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=900&q=80",
+  },
+  {
+    id: 4,
+    title: "Valorant Champions Tour 2025 Schedule Announced",
+    excerpt: "All the details on teams, locations and key match dates.",
+    date: "May 8, 2025",
+    category: "Esports News",
+    image: "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?auto=format&fit=crop&w=900&q=80",
+  },
+  {
+    id: 5,
+    title: "Improve Your Game Sense",
+    excerpt: "Tips and drills to help you make smarter decisions in-game.",
+    date: "May 6, 2025",
+    category: "Player Guide",
+    image: "https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?auto=format&fit=crop&w=900&q=80",
+  },
+  {
+    id: 6,
+    title: "From Community to Champions: Team Insane's Journey",
+    excerpt: "How a group of friends became an esports powerhouse.",
+    date: "May 5, 2025",
+    category: "Community Stories",
+    image: "https://images.unsplash.com/photo-1551103782-8ab07afd45c1?auto=format&fit=crop&w=900&q=80",
+  },
+  {
+    id: 7,
+    title: "New Payout System Now Live",
+    excerpt: "Faster withdrawals, more payment options, and better security.",
+    date: "May 4, 2025",
+    category: "Platform Updates",
+    image: "https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&w=900&q=80",
+  },
+];
+
+const PAGE_SIZE = 6;
+
 export function Blogs() {
-  const navigate = useNavigate();
-  const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [search, setSearch] = useState("");
+  const [activeCat, setActiveCat] = useState("all");
+  const [page, setPage] = useState(1);
 
-  // Get unique categories from posts
-  const categories = ['All', ...Array.from(new Set(posts.map(post => post.category).filter(Boolean)))];
+  const featured = ARTICLES.find((a) => a.featured);
+  const others = ARTICLES.filter((a) => !a.featured);
 
-  // Fetch blogs from Sanity
-  useEffect(() => {
-    const fetchBlogs = async () => {
-      try {
-        setLoading(true);
-        console.log('Fetching blogs from Sanity...');
-        const sanityPosts = await sanityService.getAllBlogPosts();
-        console.log('Fetched posts:', sanityPosts);
-        console.log('Number of posts:', sanityPosts?.length || 0);
-        
-        if (!sanityPosts || sanityPosts.length === 0) {
-          console.warn('No blog posts found in Sanity');
-          setPosts([]);
-          setError(null);
-          setLoading(false);
-          return;
-        }
-        
-        // Transform Sanity posts to BlogPost format
-        const transformedPosts: BlogPost[] = sanityPosts.map((post: SanityBlogPost) => ({
-          id: post._id,
-          slug: post.slug?.current || '',
-          title: post.title,
-          excerpt: post.excerpt || '',
-          author: post.author || 'Anonymous',
-          dateLabel: (post.modifiedAt || post._updatedAt) ? 'Updated' : 'Published',
-          date: (post.modifiedAt || post._updatedAt || post.publishedAt || post.scheduledAt)
-            ? new Date(post.modifiedAt || post._updatedAt || post.publishedAt || post.scheduledAt || '').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-            : new Date(post._createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-          category: post.categories?.[0] || 'General',
-          featured: !!post.featured,
-          image: post.featuredImage ? urlFor(post.featuredImage).width(800).height(400).url() : undefined,
-          readTime: estimateReadTime(post.content),
-        }));
+  const filtered = useMemo(() => {
+    let arr = others;
+    if (activeCat !== "all") {
+      const label = CATEGORIES.find((c) => c.key === activeCat)?.label;
+      arr = arr.filter((a) => a.category === label);
+    }
+    if (search.trim()) {
+      const s = search.toLowerCase();
+      arr = arr.filter((a) => a.title.toLowerCase().includes(s) || a.excerpt.toLowerCase().includes(s));
+    }
+    return arr;
+  }, [activeCat, search, others]);
 
-        console.log('Transformed posts:', transformedPosts);
-        setPosts(transformedPosts);
-        setError(null);
-      } catch (err) {
-        console.error('Error fetching blogs:', err);
-        console.error('Error details:', err instanceof Error ? err.message : err);
-        setError('Failed to load blog posts. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBlogs();
-  }, []);
-
-  // Estimate read time based on content
-  const estimateReadTime = (content: any[]): string => {
-    if (!content || content.length === 0) return '5 min read';
-    
-    const wordCount = content.reduce((count, block) => {
-      if (block._type === 'block' && block.children) {
-        return count + block.children.reduce((acc: number, child: any) => {
-          return acc + (child.text ? child.text.split(' ').length : 0);
-        }, 0);
-      }
-      return count;
-    }, 0);
-
-    const readTime = Math.ceil(wordCount / 200); // Average reading speed: 200 words per minute
-    return `${readTime} min read`;
-  };
-
-  // Filter posts by category
-  const filteredPosts = selectedCategory === 'All' 
-    ? posts 
-    : posts.filter(post => post.category === selectedCategory);
-
-  // Featured logic: prioritize explicitly featured post, else fallback to first item
-  const featuredPost = filteredPosts.find((post) => post.featured) || filteredPosts[0] || null;
-  const gridPosts = featuredPost
-    ? filteredPosts.filter((post) => post.id !== featuredPost.id)
-    : filteredPosts;
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#1a1625] via-[#13111c] to-[#0f0b15] py-12 px-4 relative overflow-hidden">
-      <SEO
-        title="Gaming Blog & Esports Insights"
-        description="Latest news, strategies, and insights from the world of competitive gaming. Read about tournaments, teams, and gaming trends."
-        keywords="gaming blog, esports news, tournament insights, competitive gaming articles, gaming strategies"
-      />
-      <BackgroundEffects />
-      <div className="max-w-[1920px] mx-auto relative z-10">
-        {/* Header */}
-        <div className="mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Blog & Insights
-          </h1>
-          <p className="text-gray-400 text-lg">
-            Latest news, strategies, and insights from the world of competitive gaming
-          </p>
-        </div>
+    <>
+      <SEO />
 
-        {/* Categories */}
-        <div className="flex flex-wrap gap-3 mb-8">
-          {categories.map((category) => (
-            <Button
-              key={category}
-              variant={category === selectedCategory ? 'default' : 'outline'}
-              className={
-                category === selectedCategory
-                  ? 'bg-gradient-to-r from-[#8B5CF6] to-[#6D28D9] hover:from-[#7C3AED] hover:to-[#5B21B6] text-white border-0 shadow-lg shadow-purple-500/50'
-                  : 'border-[#3d3551] hover:border-purple-500 hover:bg-purple-500/10 text-gray-300 hover:text-white transition-all'
-              }
-              onClick={() => setSelectedCategory(category)}
-            >
-              {category}
-            </Button>
-          ))}
-        </div>
-
-        {/* Loading State */}
-        {loading && (
-          <div className="flex items-center justify-center py-20">
-            <Loader size="lg" />
+      <main className="pt-32 pb-20">
+        <div className="max-w-7xl mx-auto px-6 lg:px-10">
+          <div className="text-[11px] text-gray-500 mb-6">
+            <Link to="/" className="hover:text-purple-300 transition-colors">Home</Link>
+            <span className="mx-2">/</span>
+            <span className="text-gray-300">Blog</span>
           </div>
-        )}
 
-        {/* Error State */}
-        {error && (
-          <div className="bg-red-500/10 border border-red-500/50 rounded-lg p-6 mb-8">
-            <p className="text-red-400 text-center">{error}</p>
-          </div>
-        )}
-
-        {/* No posts state */}
-        {!loading && !error && filteredPosts.length === 0 && (
-          <div className="text-center py-20">
-            <BookOpen className="h-24 w-24 text-purple-400/50 mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-white mb-2">No blog posts yet</h3>
-            <p className="text-gray-400 mb-4">
-              {selectedCategory === 'All' 
-                ? 'Get started by creating your first blog post in Sanity Studio.' 
-                : `No posts found in the "${selectedCategory}" category.`}
-            </p>
-            {selectedCategory === 'All' && (
-              <Button
-                onClick={() => window.open('/studio', '_blank')}
-                className="bg-gradient-to-r from-[#8B5CF6] to-[#6D28D9] hover:from-[#A78BFA] hover:to-[#7C3AED]"
+          {/* HERO row: title + featured */}
+          <div className="grid lg:grid-cols-[1fr_1.2fr] gap-8 mb-12">
+            <div>
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="text-4xl sm:text-5xl lg:text-[3.2rem] font-black tracking-tight leading-[1.05] mb-4"
               >
-                Open Sanity Studio
-              </Button>
-            )}
-            {selectedCategory !== 'All' && (
-              <Button
-                onClick={() => setSelectedCategory('All')}
-                variant="outline"
-                className="border-[#3d3551] hover:border-purple-500"
-              >
-                View All Categories
-              </Button>
-            )}
-          </div>
-        )}
+                Latest news
+                <br />
+                from the{" "}
+                <span className="bg-gradient-to-r from-[#a855f7] via-[#c084fc] to-[#7c3aed] bg-clip-text text-transparent">
+                  esports world
+                </span>
+              </motion.h1>
+              <p className="text-gray-400 text-base max-w-md mb-6">
+                Tips, updates and stories from the Toornify community and the world of competitive gaming.
+              </p>
 
-        {/* Content */}
-        {!loading && !error && filteredPosts.length > 0 && (
-          <>
-            {/* Featured Post */}
-            {featuredPost && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-12"
-            onClick={() => navigate(`/blogs/${featuredPost.slug}`)}
-          >
-            <Card className="bg-gradient-to-b from-[#1f1a2e] to-[#18152a] border border-[#3d3551] overflow-hidden group cursor-pointer backdrop-blur-sm">
-              <div className="grid md:grid-cols-2 gap-0">
-                <div className="relative h-64 md:h-auto overflow-hidden">
-                  {featuredPost.image ? (
-                    <img
-                      src={featuredPost.image}
-                      alt={featuredPost.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-[#1a1625] to-[#0f0b15] flex items-center justify-center">
-                      <BookOpen className="h-24 w-24 text-purple-400/50" />
-                    </div>
-                  )}
-                  <div className="absolute top-4 left-4">
-                    <span className="px-3 py-1 bg-gradient-to-r from-[#8B5CF6] to-[#6D28D9] text-white text-xs font-medium rounded-full">
-                      Featured
-                    </span>
-                  </div>
-                </div>
-                <CardContent className="p-8 flex flex-col justify-center">
-                  <div className="flex items-center gap-3 mb-4 text-sm text-gray-400">
-                    <span className="px-2 py-1 bg-purple-500/20 text-purple-400 rounded">
-                      {featuredPost.category}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-4 w-4" />
-                      {featuredPost.dateLabel}: {featuredPost.date}
-                    </span>
-                    <span>{featuredPost.readTime}</span>
-                  </div>
-                  <h2 className="text-3xl font-bold text-white mb-4 group-hover:text-purple-400 transition-colors">
-                    {featuredPost.title}
-                  </h2>
-                  <p className="text-gray-400 mb-6">{featuredPost.excerpt}</p>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <img
-                        src={getCharacterAvatar(featuredPost.author || featuredPost.id)}
-                        alt={featuredPost.author}
-                        className="h-10 w-10 rounded-full object-cover border border-purple-400/30"
-                      />
-                      <div>
-                        <p className="text-white font-medium">{featuredPost.author}</p>
-                      </div>
-                    </div>
-                    <Button 
-                      className="bg-gradient-to-r from-[#8B5CF6] to-[#6D28D9] hover:from-[#A78BFA] hover:to-[#7C3AED]"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/blogs/${featuredPost.slug}`);
-                      }}
-                    >
-                      Read More <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </div>
-                </CardContent>
+              {/* search */}
+              <div className="relative max-w-md">
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+                  placeholder="Search articles..."
+                  className="w-full bg-white/[0.03] ring-1 ring-inset ring-white/8 focus:ring-purple-400/40 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder:text-gray-500 outline-none transition-colors"
+                />
               </div>
-            </Card>
-          </motion.div>
-        )}
+            </div>
 
-        {/* Blog Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
-          {gridPosts.map((post, index) => (
-            <BlogCard key={post.id} post={post} index={index} />
-          ))}
+            {featured && <FeaturedArticle a={featured} />}
+          </div>
+
+          <div className="grid lg:grid-cols-[240px_1fr] gap-6 lg:gap-8">
+            {/* sidebar */}
+            <aside>
+              <div className="sticky top-28">
+                <h4 className="text-[11px] uppercase tracking-[0.22em] font-bold text-gray-500 mb-3 px-2">
+                  Categories
+                </h4>
+                <div className="space-y-0.5">
+                  {CATEGORIES.map((c) => {
+                    const isActive = activeCat === c.key;
+                    return (
+                      <button
+                        key={c.key}
+                        onClick={() => { setActiveCat(c.key); setPage(1); }}
+                        className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[12.5px] font-bold transition-colors ${
+                          isActive
+                            ? "bg-purple-500/15 text-white ring-1 ring-inset ring-purple-400/30"
+                            : "text-gray-400 hover:bg-white/[0.04] hover:text-white"
+                        }`}
+                      >
+                        <BookOpen className={`w-4 h-4 ${isActive ? "text-purple-300" : "text-gray-500"}`} />
+                        <span className="flex-1 text-left">{c.label}</span>
+                        <span className={`text-[10.5px] tabular-nums ${isActive ? "text-purple-300" : "text-gray-600"}`}>
+                          {c.count}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </aside>
+
+            {/* grid */}
+            <div>
+              {paged.length === 0 ? (
+                <div className="rounded-2xl bg-white/[0.03] ring-1 ring-inset ring-white/8 p-10 text-center">
+                  <p className="text-gray-400 text-sm">No articles found.</p>
+                </div>
+              ) : (
+                <>
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {paged.map((a, i) => <ArticleCard key={a.id} a={a} index={i} />)}
+                  </div>
+                  {filtered.length > PAGE_SIZE && (
+                    <Pagination page={page} totalPages={totalPages} onChange={setPage} />
+                  )}
+                </>
+              )}
+            </div>
+          </div>
         </div>
-          </>
-        )}
+      </main>
+    </>
+  );
+}
+
+function FeaturedArticle({ a }: { a: Article }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.97 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.6 }}
+      className="group relative rounded-3xl overflow-hidden ring-1 ring-inset ring-white/10 hover:ring-purple-400/40 cursor-pointer transition-all min-h-[280px]"
+    >
+      <div className="absolute inset-0 bg-cover bg-center scale-105 group-hover:scale-110 transition-transform duration-[1200ms] ease-out"
+        style={{ backgroundImage: `url(${a.image})` }} />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0a0414] via-[#0a0414]/40 to-transparent" />
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+
+      <span className="absolute top-4 left-4 px-2.5 py-1 rounded-md bg-purple-500/90 text-[10px] font-black text-white tracking-widest uppercase ring-1 ring-white/15">
+        Featured
+      </span>
+
+      <div className="absolute inset-x-0 bottom-0 p-6">
+        <p className="text-[11px] text-gray-300 mb-2 flex items-center gap-1.5">
+          <Calendar className="w-3 h-3" /> {a.date}
+        </p>
+        <h3 className="text-xl lg:text-2xl font-black text-white tracking-tight leading-tight mb-2.5">
+          {a.title}
+        </h3>
+        <p className="text-[12.5px] text-gray-300 leading-relaxed mb-3 line-clamp-2 max-w-md">{a.excerpt}</p>
+        <span className="inline-flex items-center gap-1 text-[12px] font-bold text-purple-300 group-hover:text-purple-200 transition-colors">
+          Read More <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+        </span>
       </div>
+    </motion.div>
+  );
+}
+
+function ArticleCard({ a, index }: { a: Article; index: number }) {
+  return (
+    <motion.article
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, delay: index * 0.06 }}
+      whileHover={{ y: -4 }}
+      className="group relative rounded-2xl overflow-hidden bg-[#0c0618] ring-1 ring-inset ring-white/8 hover:ring-purple-400/40 transition-all cursor-pointer flex flex-col"
+    >
+      <div className="relative aspect-[16/10] overflow-hidden">
+        <div className="absolute inset-0 bg-cover bg-center scale-105 group-hover:scale-110 transition-transform duration-[1200ms] ease-out"
+          style={{ backgroundImage: `url(${a.image})` }} />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0c0618] via-transparent to-transparent" />
+        <span className="absolute top-3 left-3 px-2 py-0.5 rounded bg-purple-500/90 text-[9px] font-black text-white tracking-widest uppercase ring-1 ring-white/15">
+          {a.category}
+        </span>
+      </div>
+      <div className="p-4 flex-1 flex flex-col">
+        <p className="text-[10.5px] text-gray-500 mb-1.5 flex items-center gap-1.5">
+          <Calendar className="w-3 h-3" /> {a.date}
+        </p>
+        <h3 className="text-[14px] font-black text-white tracking-tight leading-snug mb-2 group-hover:text-purple-200 transition-colors">
+          {a.title}
+        </h3>
+        <p className="text-[11.5px] text-gray-400 leading-relaxed mb-3 line-clamp-2 flex-1">{a.excerpt}</p>
+        <span className="inline-flex items-center gap-1 text-[11.5px] font-bold text-purple-300 group-hover:text-purple-200 transition-colors">
+          Read More <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+        </span>
+      </div>
+    </motion.article>
+  );
+}
+
+function Pagination({ page, totalPages, onChange }: { page: number; totalPages: number; onChange: (p: number) => void }) {
+  return (
+    <div className="mt-8 flex items-center justify-center gap-1">
+      <PageBtn disabled={page === 1} onClick={() => onChange(Math.max(1, page - 1))}><ChevronLeft className="w-3.5 h-3.5" /></PageBtn>
+      {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+        <PageBtn key={p} active={p === page} onClick={() => onChange(p)}>{p}</PageBtn>
+      ))}
+      <PageBtn disabled={page === totalPages} onClick={() => onChange(Math.min(totalPages, page + 1))}><ChevronRight className="w-3.5 h-3.5" /></PageBtn>
     </div>
   );
 }
 
-function BlogCard({ post, index }: { post: BlogPost; index: number }) {
-  const navigate = useNavigate();
-  const isMobile = useIsMobile();
-  const [isOpen, setIsOpen] = useState(false);
-
-  // Desktop: hover-driven (CSS handles glow + collapse). Mobile: tap to toggle.
-  const handleToggle = () => {
-    if (isMobile) setIsOpen((prev) => !prev);
-  };
-
-  const handleReadMore = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    navigate(`/blogs/${post.slug}`);
-  };
-
+function PageBtn({ children, onClick, disabled, active }: { children: React.ReactNode; onClick?: () => void; disabled?: boolean; active?: boolean }) {
   return (
-    <motion.article
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: index * 0.08 }}
-      onMouseEnter={() => !isMobile && setIsOpen(true)}
-      onMouseLeave={() => !isMobile && setIsOpen(false)}
-      className="self-start"
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className={`min-w-[34px] h-[34px] px-2 rounded-lg text-[12px] font-bold flex items-center justify-center transition-all ${
+        active
+          ? "bg-gradient-to-b from-[#7c3aed] to-[#5b21b6] text-white ring-1 ring-inset ring-purple-300/30 shadow-md shadow-purple-900/40"
+          : "bg-white/[0.04] hover:bg-white/[0.08] ring-1 ring-inset ring-white/8 text-gray-300 disabled:opacity-30 disabled:cursor-not-allowed"
+      }`}
     >
-      <Card
-        className={`neon-card ${isOpen ? "is-active" : ""} border-0 overflow-hidden cursor-pointer group`}
-        role="button"
-        tabIndex={0}
-        aria-expanded={isOpen}
-        aria-label={`${post.title} — ${isMobile ? "tap to expand" : "hover to expand"}`}
-        onClick={handleToggle}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            isMobile ? setIsOpen((p) => !p) : navigate(`/blogs/${post.slug}`);
-          }
-        }}
-      >
-        {/* ALWAYS VISIBLE: title + category + toggle hint (preserves SEO/scan) */}
-        <div className="relative z-10 p-5 flex items-start justify-between gap-3">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="px-2.5 py-1 bg-purple-500/20 text-purple-300 text-[11px] font-bold uppercase tracking-wider rounded border border-purple-500/30">
-                {post.category}
-              </span>
-              <span className="flex items-center gap-1 text-[11px] text-gray-400 uppercase tracking-wider">
-                <Clock className="h-3 w-3" />
-                {post.readTime}
-              </span>
-            </div>
-            <h3 className="text-white text-lg font-bold leading-tight tracking-tight group-hover:text-purple-300 transition-colors line-clamp-2">
-              {post.title}
-            </h3>
-          </div>
-          <div
-            className={`flex-shrink-0 w-8 h-8 rounded-md bg-purple-500/15 border border-purple-500/40 flex items-center justify-center transition-transform duration-300 ${
-              isOpen ? "rotate-180 bg-purple-500/30" : ""
-            }`}
-            aria-hidden="true"
-          >
-            <ChevronDown className="h-4 w-4 text-purple-300" />
-          </div>
-        </div>
-
-        {/* COLLAPSIBLE: image + excerpt + meta + CTA */}
-        <div className={`collapse-grid ${isOpen ? "is-open" : ""} relative z-10`}>
-          <div className="collapse-inner">
-            <div className="relative h-44 overflow-hidden mx-5 rounded-md border border-[#3d3551]/60">
-              {post.image ? (
-                <img
-                  src={post.image}
-                  alt={post.title}
-                  loading="lazy"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-              ) : (
-                <div className="w-full h-full bg-gradient-to-br from-[#1f1a2e] to-[#0f0b15] flex items-center justify-center">
-                  <BookOpen className="h-14 w-14 text-purple-400/40" />
-                </div>
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0f0b15] via-transparent to-transparent" />
-              <div className="absolute bottom-2 left-2 flex items-center gap-1.5 px-2 py-1 bg-black/60 backdrop-blur-sm rounded border border-purple-500/30">
-                <Zap className="h-3 w-3 text-purple-300" />
-                <span className="text-[10px] text-purple-200 font-bold uppercase tracking-wider">
-                  Esports
-                </span>
-              </div>
-            </div>
-
-            <CardContent className="pt-4 pb-5 px-5">
-              <p className="text-gray-300 text-sm leading-relaxed mb-4 line-clamp-3">
-                {post.excerpt}
-              </p>
-
-              <div className="flex items-center justify-between gap-3 mb-4 pb-4 border-b border-[#3d3551]/60">
-                <div className="flex items-center gap-2 min-w-0">
-                  <img
-                    src={getCharacterAvatar(post.author || post.id)}
-                    alt={post.author}
-                    className="h-8 w-8 flex-shrink-0 rounded-full object-cover border border-purple-400/30"
-                  />
-                  <div className="flex flex-col min-w-0">
-                    <span className="text-white text-xs font-semibold truncate flex items-center gap-1">
-                      <User className="h-3 w-3 text-purple-400" />
-                      {post.author}
-                    </span>
-                    <span className="text-gray-500 text-[10px] flex items-center gap-1">
-                      <Calendar className="h-2.5 w-2.5" />
-                      {post.dateLabel}: {post.date}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <Button
-                onClick={handleReadMore}
-                className="w-full bg-gradient-to-r from-[#8B5CF6] to-[#6D28D9] hover:from-[#A78BFA] hover:to-[#7C3AED] text-white font-bold uppercase tracking-wider text-xs h-10 shadow-lg shadow-purple-500/30 border border-purple-400/30"
-              >
-                Read Full Drop
-                <ArrowRight className="ml-2 h-3.5 w-3.5" />
-              </Button>
-            </CardContent>
-          </div>
-        </div>
-      </Card>
-    </motion.article>
+      {children}
+    </button>
   );
 }

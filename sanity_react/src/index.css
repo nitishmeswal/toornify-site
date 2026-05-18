@@ -79,6 +79,60 @@
   50%      { opacity: 1;    filter: blur(22px); }
 }
 
+/* Bracket connector "going to final" neon trail */
+@keyframes bracketTrail {
+  0%   { stroke-dashoffset: 134; opacity: 0; }
+  15%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { stroke-dashoffset: -134; opacity: 0; }
+}
+
+/* Fire flicker for the final bracket */
+@keyframes fireFlicker {
+  0%, 100% { opacity: 0.35; transform: scaleY(1); }
+  25%      { opacity: 0.55; transform: scaleY(1.06); }
+  50%      { opacity: 0.30; transform: scaleY(0.96); }
+  75%      { opacity: 0.50; transform: scaleY(1.04); }
+}
+.animate-fire-flicker      { animation: fireFlicker 1.5s ease-in-out infinite; }
+.animate-fire-flicker-slow { animation: fireFlicker 2.4s ease-in-out infinite; }
+
+/* Rising embers (SVG inside fire connector) */
+@keyframes emberRise {
+  0%   { transform: translateY(0) scale(1);   opacity: 0; }
+  10%  { opacity: 1; }
+  100% { transform: translateY(-44px) scale(0.4); opacity: 0; }
+}
+
+/* Floating embers inside the final card */
+@keyframes cardEmber {
+  0%   { transform: translateY(0)    scale(1);   opacity: 0; }
+  10%  { opacity: 1; }
+  100% { transform: translateY(-90px) scale(0.3); opacity: 0; }
+}
+
+/* Slow spin for "video" preview backdrop */
+@keyframes spinSlow { to { transform: rotate(360deg); } }
+.animate-spin-slow { animation: spinSlow 14s linear infinite; }
+
+/* Scan line for video feel */
+@keyframes scanLine {
+  0%   { background-position: 0 -100%; }
+  100% { background-position: 0 200%; }
+}
+.animate-scan-line {
+  background: linear-gradient(transparent, rgba(255,255,255,0.06) 50%, transparent);
+  background-size: 100% 80px;
+  animation: scanLine 3s linear infinite;
+}
+
+/* TiltCard particle specks — drift outward and fade */
+@keyframes tiltSpeck {
+  0%   { transform: translate(0, 0); opacity: 0; }
+  20%  { opacity: 1; }
+  100% { transform: translate(var(--dx, 20px), var(--dy, -20px)); opacity: 0; }
+}
+
 .neon-card {
   position: relative;
   isolation: isolate;

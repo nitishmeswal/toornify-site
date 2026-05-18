@@ -12,12 +12,17 @@ import OrganiserOnboarding from './pages/onborading/Organiser'
 import CreatorOnboarding from './pages/onborading/Creator'
 import SelectRole from './pages/SelectRole'
 import { GlobalChat } from '@/components/GlobalChat'
+import GlobalBackground from '@/components/effects/GlobalBackground'
 
 // Lazy load pages for better performance
-const Home = lazy(() => import('@/pages/Home').then(m => ({ default: m.Home })))
+const Home = lazy(() => import('@/pages/HomeNew'))
+const Pricing = lazy(() => import('@/pages/Pricing'))
 const Tournaments = lazy(() => import('@/pages/Tournaments').then(m => ({ default: m.Tournaments })))
 const TournamentDetails = lazy(() => import('@/pages/TournamentDetails').then(m => ({ default: m.TournamentDetails })))
-const Games = lazy(() => import('@/pages/Games').then(m => ({ default: m.Games })))
+const Games = lazy(() => import('@/pages/Games'))
+const HowItWorks = lazy(() => import('@/pages/HowItWorks'))
+const FAQ = lazy(() => import('@/pages/FAQ'))
+const Contact = lazy(() => import('@/pages/Contact'))
 const Teams = lazy(() => import('@/pages/Teams').then(m => ({ default: m.Teams })))
 const TeamView = lazy(() => import('@/pages/TeamView').then(m => ({ default: m.TeamView })))
 const UserProfile = lazy(() => import('@/pages/UserProfile').then(m => ({ default: m.UserProfile })))
@@ -26,7 +31,7 @@ const BracketDetail = lazy(() => import('@/pages/BracketDetail').then(m => ({ de
 const Blogs = lazy(() => import('@/pages/Blogs').then(m => ({ default: m.Blogs })))
 const BlogDetail = lazy(() => import('@/pages/BlogDetail').then(m => ({ default: m.BlogDetail })))
 const News = lazy(() => import('@/pages/News').then(m => ({ default: m.News })))
-const AboutUs = lazy(() => import('@/pages/AboutUs').then(m => ({ default: m.AboutUs })))
+const AboutUs = lazy(() => import('@/pages/AboutUs'))
 const SignUp = lazy(() => import('@/pages/SignUp').then(m => ({ default: m.SignUp })))
 const SignIn = lazy(() => import('@/pages/SignIn'))
 const OAuthCallback = lazy(() => import('@/pages/OAuthCallback').then(m => ({ default: m.OAuthCallback })))
@@ -40,6 +45,8 @@ function AppContent() {
 
   return (
     <>
+      {/* Global atmospheric backdrop — video + laser-rain on every route. */}
+      <GlobalBackground />
       <Layout>
       <Suspense
         fallback={
@@ -50,6 +57,7 @@ function AppContent() {
       >
         <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/pricing" element={<Pricing />} />
               <Route path="/tournaments" element={<Tournaments />} />
               <Route path="/tournaments/:id" element={<TournamentDetails />} />
               <Route path="/games" element={<Games />} />
@@ -62,6 +70,10 @@ function AppContent() {
               <Route path="/blogs/:slug" element={<BlogDetail />} />
               <Route path="/news" element={<News />} />
               <Route path="/about-us" element={<AboutUs />} />
+              <Route path="/about" element={<AboutUs />} />
+              <Route path="/how-it-works" element={<HowItWorks />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/contact" element={<Contact />} />
               <Route path="/sign-in" element={<SignIn />} />
               <Route path="/sign-up" element={<SignUp />} />
               <Route path="/auth/callback" element={<OAuthCallback />} />
