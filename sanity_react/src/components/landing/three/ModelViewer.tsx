@@ -122,7 +122,7 @@ export default function ModelViewer({ scene, className, onReady }: ModelViewerPr
 
     const camDef = scene.camera || {};
     const camera = new THREE.PerspectiveCamera(camDef.fov ?? 45, width / height, 0.1, 1000);
-    camera.position.set(...(camDef.position ?? [0, 0, 6]));
+    camera.position.set(...(camDef.position ?? [0, 0, 6]) as [number, number, number]);
     if (camDef.lookAt) camera.lookAt(new THREE.Vector3(...camDef.lookAt));
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -140,10 +140,10 @@ export default function ModelViewer({ scene, className, onReady }: ModelViewerPr
       const geometry = buildGeometry(obj.geometry);
       const material = buildMaterial(obj.material);
       const mesh = new THREE.Mesh(geometry, material);
-      if (obj.position) mesh.position.set(...obj.position);
-      if (obj.rotation) mesh.rotation.set(...obj.rotation);
+      if (obj.position) mesh.position.set(...obj.position as [number, number, number]);
+      if (obj.rotation) mesh.rotation.set(...obj.rotation as [number, number, number]);
       if (obj.scale) {
-        if (Array.isArray(obj.scale)) mesh.scale.set(...obj.scale);
+        if (Array.isArray(obj.scale)) mesh.scale.set(...obj.scale as [number, number, number]);
         else mesh.scale.setScalar(obj.scale);
       }
       threeScene.add(mesh);
