@@ -1,105 +1,116 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
-  Gamepad2, Users, Trophy, Sparkles, ArrowUpRight, Flame,
+  Gamepad2, Users, Trophy, Sparkles, ArrowUpRight, AlertCircle, RefreshCw,
 } from "lucide-react";
 import SEO from "@/components/SEO";
+import { Loader } from "@/components/ui/Loader";
+import { gameService } from "@/lib/services";
+import type { Game as ApiGame } from "@/lib/services/game.service";
+import { getImageUrl } from "@/lib/utils";
 
-type Genre = "All Games" | "FPS" | "Battle Royale" | "MOBA" | "Sports" | "Racing" | "Strategy";
+const ACCENT_GRADIENTS = [
+  "from-red-500/40 via-rose-500/20 to-transparent",
+  "from-amber-500/40 via-orange-500/20 to-transparent",
+  "from-emerald-500/40 via-green-500/20 to-transparent",
+  "from-orange-500/40 via-red-500/20 to-transparent",
+  "from-blue-500/40 via-cyan-500/20 to-transparent",
+  "from-rose-500/40 via-red-500/20 to-transparent",
+  "from-fuchsia-500/40 via-purple-500/20 to-transparent",
+  "from-violet-500/40 via-purple-500/20 to-transparent",
+  "from-cyan-500/40 via-blue-500/20 to-transparent",
+  "from-pink-500/40 via-rose-500/20 to-transparent",
+];
 
-const GENRES: Genre[] = ["All Games", "FPS", "Battle Royale", "MOBA", "Sports", "Racing", "Strategy"];
+const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=900&q=80";
 
-interface Game {
+interface DisplayGame {
+  _id: string;
   name: string;
-  genre: Exclude<Genre, "All Games">;
-  tournaments: string;
-  players: string;
+  genre: string;
+  playerCount: number;
   image: string;
   accent: string;
 }
 
-const GAMES: Game[] = [
-  {
-    name: "VALORANT",
-    genre: "FPS",
-    tournaments: "2.4K",
-    players: "68K",
-    image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=900&q=80",
-    accent: "from-red-500/40 via-rose-500/20 to-transparent",
-  },
-  {
-    name: "BGMI",
-    genre: "Battle Royale",
-    tournaments: "1.8K",
-    players: "39K",
-    image: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=900&q=80",
-    accent: "from-amber-500/40 via-orange-500/20 to-transparent",
-  },
-  {
-    name: "CALL OF DUTY",
-    genre: "FPS",
-    tournaments: "1.2K",
-    players: "28K",
-    image: "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?auto=format&fit=crop&w=900&q=80",
-    accent: "from-emerald-500/40 via-green-500/20 to-transparent",
-  },
-  {
-    name: "FREE FIRE",
-    genre: "Battle Royale",
-    tournaments: "980",
-    players: "22K",
-    image: "https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?auto=format&fit=crop&w=900&q=80",
-    accent: "from-orange-500/40 via-red-500/20 to-transparent",
-  },
-  {
-    name: "CS2",
-    genre: "FPS",
-    tournaments: "875",
-    players: "18K",
-    image: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=900&q=80",
-    accent: "from-blue-500/40 via-cyan-500/20 to-transparent",
-  },
-  {
-    name: "DOTA 2",
-    genre: "MOBA",
-    tournaments: "640",
-    players: "14K",
-    image: "https://images.unsplash.com/photo-1542751110-97427bbecf20?auto=format&fit=crop&w=900&q=80",
-    accent: "from-rose-500/40 via-red-500/20 to-transparent",
-  },
-  {
-    name: "LEAGUE OF LEGENDS",
-    genre: "MOBA",
-    tournaments: "530",
-    players: "12K",
-    image: "https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&w=900&q=80",
-    accent: "from-fuchsia-500/40 via-purple-500/20 to-transparent",
-  },
-  {
-    name: "APEX LEGENDS",
-    genre: "Battle Royale",
-    tournaments: "420",
-    players: "9K",
-    image: "https://images.unsplash.com/photo-1551103782-8ab07afd45c1?auto=format&fit=crop&w=900&q=80",
-    accent: "from-violet-500/40 via-purple-500/20 to-transparent",
-  },
-];
-
-const STATS = [
-  { v: "18+",   l: "Supported Games",   icon: Gamepad2 },
-  { v: "24K+",  l: "Tournaments Hosted", icon: Trophy },
-  { v: "120K+", l: "Matches Played",     icon: Flame },
-  { v: "150K+", l: "Players Competing",  icon: Users },
-];
-
 export default function Games() {
-  const [active, setActive] = useState<Genre>("All Games");
+  const [games, setGames] = useState<DisplayGame[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [active, setActive] = useState<string>("All Games");
+  const [retryKey, setRetryKey] = useState(0);
+
+  useEffect(() => {
+    let stale = false;
+
+    async function fetchGames() {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const data = await gameService.getAll();
+        if (stale) return;
+        const mapped: DisplayGame[] = data.map((g, i: number) => {
+          const raw = g as ApiGame & { playerCount?: number; players?: string[] };
+          return {
+            _id: raw._id || raw.id || '',
+            name: raw.name,
+            genre: raw.category || raw.platform?.[0] || "General",
+            playerCount: raw.playerCount || raw.players?.length || 0,
+            image: raw.gameBannerPhoto || raw.image || FALLBACK_IMAGE,
+            accent: ACCENT_GRADIENTS[i % ACCENT_GRADIENTS.length],
+          };
+        });
+        setGames(mapped);
+      } catch (err: unknown) {
+        console.error("Failed to fetch games:", err);
+        if (!stale) setError(err instanceof Error ? err.message : "Failed to load games");
+      } finally {
+        if (!stale) setIsLoading(false);
+      }
+    }
+
+    fetchGames();
+    return () => { stale = true; };
+  }, [retryKey]);
+
+  const genres = useMemo(() => {
+    const unique = Array.from(new Set(games.map((g) => g.genre))).sort();
+    return ["All Games", ...unique];
+  }, [games]);
 
   const filtered = useMemo(
-    () => (active === "All Games" ? GAMES : GAMES.filter((g) => g.genre === active)),
-    [active]
+    () => (active === "All Games" ? games : games.filter((g) => g.genre === active)),
+    [active, games]
   );
+
+  const stats = useMemo(() => [
+    { v: `${games.length}+`, l: "Supported Games", icon: Gamepad2 },
+    { v: `${games.reduce((acc, g) => acc + g.playerCount, 0).toLocaleString()}+`, l: "Players Competing", icon: Users },
+  ], [games]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader className="w-8 h-8 text-purple-400" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-4">
+        <AlertCircle className="w-12 h-12 text-red-400" />
+        <p className="text-gray-300 text-center max-w-md">{error}</p>
+        <button
+          onClick={() => setRetryKey((k) => k + 1)}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium transition-colors"
+        >
+          <RefreshCw className="w-4 h-4" /> Retry
+        </button>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -151,9 +162,9 @@ export default function Games() {
             >
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_70%_at_50%_50%,rgba(168,85,247,0.30),transparent_70%)]" />
               <div className="relative grid grid-cols-3 gap-3 h-full">
-                {GAMES.slice(0, 3).map((g, i) => (
+                {games.slice(0, 3).map((g, i) => (
                   <motion.div
-                    key={g.name}
+                    key={g._id}
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.2 + i * 0.1 }}
@@ -162,7 +173,7 @@ export default function Games() {
                   >
                     <div
                       className="absolute inset-0 bg-cover bg-center"
-                      style={{ backgroundImage: `url(${g.image})` }}
+                      style={{ backgroundImage: `url(${getImageUrl(g.image) || FALLBACK_IMAGE})` }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0a0414] via-[#0a0414]/40 to-transparent" />
                     <div className="absolute inset-x-0 bottom-2 text-center">
@@ -174,9 +185,9 @@ export default function Games() {
             </motion.div>
           </div>
 
-          {/* STATS BAR (moved up — sits right after the hero) */}
+          {/* STATS BAR */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-10">
-            {STATS.map((s, i) => (
+            {stats.map((s, i) => (
               <motion.div
                 key={s.l}
                 initial={{ opacity: 0, y: 14 }}
@@ -196,15 +207,14 @@ export default function Games() {
             ))}
           </div>
 
-          {/* GENRE TABS (moved here — right above the grid they filter,
-              per UX best practice; filters belong adjacent to their data) */}
+          {/* GENRE TABS */}
           <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-purple-300 mb-1">Browse</p>
               <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white">All Games</h2>
             </div>
             <div className="relative inline-flex flex-wrap items-center gap-1 p-1 rounded-2xl bg-white/[0.04] ring-1 ring-inset ring-white/8 backdrop-blur-md max-w-full overflow-x-auto">
-              {GENRES.map((g) => {
+              {genres.map((g) => {
                 const isActive = active === g;
                 return (
                   <button
@@ -238,9 +248,16 @@ export default function Games() {
               transition={{ duration: 0.35 }}
               className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
             >
-              {filtered.map((g, i) => (
-                <GameCard key={g.name} game={g} index={i} />
-              ))}
+              {filtered.length === 0 ? (
+                <div className="col-span-full text-center py-12">
+                  <Gamepad2 className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+                  <p className="text-gray-400">No games found in this category</p>
+                </div>
+              ) : (
+                filtered.map((g, i) => (
+                  <GameCard key={g._id} game={g} index={i} />
+                ))
+              )}
             </motion.div>
           </AnimatePresence>
 
@@ -259,7 +276,7 @@ export default function Games() {
   );
 }
 
-function GameCard({ game, index }: { game: Game; index: number }) {
+function GameCard({ game, index }: { game: DisplayGame; index: number }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -272,7 +289,7 @@ function GameCard({ game, index }: { game: Game; index: number }) {
       <div className="relative aspect-[4/5] overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center scale-105 group-hover:scale-110 transition-transform duration-[1200ms] ease-out"
-          style={{ backgroundImage: `url(${game.image})` }}
+          style={{ backgroundImage: `url(${getImageUrl(game.image) || FALLBACK_IMAGE})` }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0c0618] via-[#0c0618]/40 to-transparent" />
         <div className={`absolute inset-0 bg-gradient-to-br ${game.accent} mix-blend-screen opacity-50 group-hover:opacity-90 transition-opacity duration-500`} />
@@ -295,12 +312,11 @@ function GameCard({ game, index }: { game: Game; index: number }) {
         <div className="flex items-center justify-between text-[11px]">
           <div className="flex items-center gap-1.5">
             <Trophy className="w-3 h-3 text-purple-300" />
-            <span className="text-white font-black tabular-nums">{game.tournaments}</span>
-            <span className="text-gray-500">Tournaments</span>
+            <span className="text-white font-black tabular-nums">{game.genre}</span>
           </div>
           <div className="flex items-center gap-1.5">
             <Users className="w-3 h-3 text-purple-300" />
-            <span className="text-white font-black tabular-nums">{game.players}</span>
+            <span className="text-white font-black tabular-nums">{game.playerCount}</span>
             <span className="text-gray-500">Players</span>
           </div>
         </div>
