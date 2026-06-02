@@ -93,9 +93,16 @@ export const authService = {
    */
   async signUp(data: SignUpData): Promise<AuthResponse> {
     try {
+      // Backend expects `name` field, not `fullName`
+      const payload = {
+        name: data.fullName,
+        email: data.email,
+        password: data.password,
+        role: data.role,
+      };
       const response = await api.post<any>(
         API_CONFIG.AUTH.SIGN_UP,
-        data
+        payload
       );
       
       console.log('Sign up raw response:', response);
