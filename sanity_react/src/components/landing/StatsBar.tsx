@@ -34,7 +34,7 @@ export default function StatsBar() {
 
         if (stale) return;
 
-        const tournamentCount = tournamentsRes.status === 'fulfilled' ? (tournamentsRes.value.data?.length || 0) : 0;
+        const tournamentCount = tournamentsRes.status === 'fulfilled' ? (tournamentsRes.value.pagination?.totalItems ?? tournamentsRes.value.data?.length ?? 0) : 0;
         const gameCount = games.status === 'fulfilled' ? games.value.length : 0;
         const playerCount = players.status === 'fulfilled' ? players.value.length : 0;
 

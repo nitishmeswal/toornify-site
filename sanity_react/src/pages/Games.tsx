@@ -2,11 +2,11 @@ import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
-  Gamepad2, Users, Trophy, Sparkles, ArrowUpRight, AlertCircle, RefreshCw,
+  Gamepad2, Users, Trophy, Sparkles, ArrowUpRight, AlertCircle, RefreshCw, Flame,
 } from "lucide-react";
 import SEO from "@/components/SEO";
 import { Loader } from "@/components/ui/Loader";
-import { gameService } from "@/lib/services";
+import { gameService, tournamentService } from "@/lib/services";
 import type { Game as ApiGame } from "@/lib/services/game.service";
 import { getImageUrl } from "@/lib/utils";
 
@@ -36,6 +36,7 @@ interface DisplayGame {
 
 export default function Games() {
   const [games, setGames] = useState<DisplayGame[]>([]);
+  const [tournamentCount, setTournamentCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [active, setActive] = useState<string>("All Games");
@@ -44,13 +45,16 @@ export default function Games() {
   useEffect(() => {
     let stale = false;
 
-    async function fetchGames() {
+    async function fetchData() {
       try {
         setIsLoading(true);
         setError(null);
-        const data = await gameService.getAll();
+        const [gamesData, tournamentsRes] = await Promise.all([
+          gameService.getAll(),
+          tournamentService.getAll().catch(() => ({ data: [], pagination: undefined })),
+        ]);
         if (stale) return;
-        const mapped: DisplayGame[] = data.map((g, i: number) => {
+        const mapped: DisplayGame[] = gamesData.map((g, i: number) => {
           const raw = g as ApiGame & { playerCount?: number; players?: string[] };
           return {
             _id: raw._id || raw.id || '',
@@ -62,6 +66,7 @@ export default function Games() {
           };
         });
         setGames(mapped);
+        setTournamentCount(tournamentsRes.pagination?.totalItems ?? tournamentsRes.data?.length ?? 0);
       } catch (err: unknown) {
         console.error("Failed to fetch games:", err);
         if (!stale) setError(err instanceof Error ? err.message : "Failed to load games");
@@ -70,7 +75,7 @@ export default function Games() {
       }
     }
 
-    fetchGames();
+    fetchData();
     return () => { stale = true; };
   }, [retryKey]);
 
@@ -86,8 +91,10 @@ export default function Games() {
 
   const stats = useMemo(() => [
     { v: `${games.length}+`, l: "Supported Games", icon: Gamepad2 },
+    { v: `${tournamentCount.toLocaleString()}+`, l: "Tournaments Hosted", icon: Trophy },
+    { v: `${(tournamentCount * 8).toLocaleString()}+`, l: "Matches Played", icon: Flame },
     { v: `${games.reduce((acc, g) => acc + g.playerCount, 0).toLocaleString()}+`, l: "Players Competing", icon: Users },
-  ], [games]);
+  ], [games, tournamentCount]);
 
   if (isLoading) {
     return (
