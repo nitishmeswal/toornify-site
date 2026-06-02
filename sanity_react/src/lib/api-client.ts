@@ -59,9 +59,9 @@ apiClient.interceptors.response.use(
       if (!originalRequest._retry) {
         originalRequest._retry = true;
 
-        try {
-          const refreshToken = localStorage.getItem('refreshToken');
-          if (refreshToken) {
+        const refreshToken = localStorage.getItem('refreshToken');
+        if (refreshToken) {
+          try {
             const response = await axios.post(
               `${API_CONFIG.BASE_URL}${API_CONFIG.AUTH.REFRESH_TOKEN}`,
               { refreshToken }
@@ -75,22 +75,25 @@ apiClient.interceptors.response.use(
               originalRequest.headers.Authorization = `Bearer ${token}`;
             }
             return apiClient(originalRequest);
+          } catch (refreshError) {
+            // Refresh failed, clear tokens and redirect
+            console.error('Token refresh failed:', refreshError);
           }
-        } catch (refreshError) {
-          // Refresh failed, clear tokens and redirect
-          console.error('Token refresh failed:', refreshError);
-          localStorage.removeItem('authToken');
-          localStorage.removeItem('refreshToken');
-          
-          // Dispatch custom event for logout
-          window.dispatchEvent(new CustomEvent('auth:token-expired'));
-          
-          if (window.location.pathname !== '/sign-in' && window.location.pathname !== '/sign-up') {
-            window.location.href = '/sign-in?reason=session-expired';
-          }
-          
-          return Promise.reject(refreshError);
         }
+
+        // No refresh token or refresh failed — clear session and redirect
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('user');
+        
+        // Dispatch custom event for logout
+        window.dispatchEvent(new CustomEvent('auth:token-expired'));
+        
+        if (window.location.pathname !== '/sign-in' && window.location.pathname !== '/sign-up') {
+          window.location.href = '/sign-in?reason=session-expired';
+        }
+        
+        return Promise.reject(error);
       }
     }
 
