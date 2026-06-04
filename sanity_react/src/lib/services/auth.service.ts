@@ -88,216 +88,106 @@ interface LichessTokenResponse {
 }
 
 export const authService = {
+  parseAuthResponse(data: Record<string, unknown>): AuthResponse {
+    // Handle nested: { data: { loggedInUser, authToken } }
+    const nested = data.data as Record<string, unknown> | undefined;
+    if (nested && nested.loggedInUser) {
+      const loggedInUser = Array.isArray(nested.loggedInUser)
+        ? nested.loggedInUser[0]
+        : nested.loggedInUser;
+      return {
+        ...(data as unknown as AuthResponse),
+        data: {
+          ...(nested as unknown as AuthResponse['data']),
+          loggedInUser: loggedInUser as User,
+        },
+      };
+    }
+
+    // Handle flat: { loggedInUser, authToken }
+    if (data.loggedInUser) {
+      const loggedInUser = Array.isArray(data.loggedInUser)
+        ? data.loggedInUser[0]
+        : data.loggedInUser;
+      return {
+        statusCode: (data.statusCode as number) || 200,
+        data: {
+          loggedInUser: loggedInUser as User,
+          authToken: (data.authToken || data.token) as string,
+          refreshToken: data.refreshToken as string | undefined,
+        },
+        message: (data.message as string) || 'Success',
+        success: true,
+      };
+    }
+
+    throw new Error('Invalid response structure from server. Please check backend API.');
+  },
+
   /**
    * Sign up new user
    */
   async signUp(data: SignUpData): Promise<AuthResponse> {
-    try {
-      // Backend expects `name` field, not `fullName`
-      const payload = {
-        name: data.fullName,
-        email: data.email,
-        password: data.password,
-        role: data.role,
-      };
-      const response = await api.post<any>(
-        API_CONFIG.AUTH.SIGN_UP,
-        payload
-      );
-      
-      console.log('Sign up raw response:', response);
-      console.log('Sign up response.data:', response.data);
-      console.log('Response structure check:', {
-        hasData: !!response.data,
-        hasDataProperty: !!(response.data as any)?.data,
-        hasLoggedInUser: !!(response.data as any)?.data?.loggedInUser,
-        directLoggedInUser: !!(response.data as any)?.loggedInUser,
-        isArray: Array.isArray((response.data as any)?.data?.loggedInUser || (response.data as any)?.loggedInUser),
-        keys: Object.keys(response.data || {}),
-        fullResponse: JSON.stringify(response.data, null, 2)
-      });
-      
-      // Validate response exists
-      if (!response.data) {
-        console.error('No data in response:', response);
-        throw new Error('Invalid response from server');
-      }
-      
-      let authResponse: AuthResponse;
-      
-      // Handle three possible response structures:
-      // 1. { data: { loggedInUser: {...}, authToken: ... } } - nested structure
-      // 2. { data: { loggedInUser: [{...}], authToken: ... } } - nested with array
-      // 3. { loggedInUser: {...} or [{...}], authToken: ... } - flat structure
-      
-      if (response.data.data && response.data.data.loggedInUser) {
-        // Nested structure (expected)
-        console.log('Using nested response structure');
-        const loggedInUser = Array.isArray(response.data.data.loggedInUser) 
-          ? response.data.data.loggedInUser[0] 
-          : response.data.data.loggedInUser;
-        
-        authResponse = {
-          ...response.data,
-          data: {
-            ...response.data.data,
-            loggedInUser
-          }
-        };
-      } else if (response.data.loggedInUser) {
-        // Flat structure - wrap it
-        console.log('Using flat response structure, wrapping it');
-        const loggedInUser = Array.isArray(response.data.loggedInUser) 
-          ? response.data.loggedInUser[0] 
-          : response.data.loggedInUser;
-        
-        authResponse = {
-          statusCode: response.data.statusCode || 200,
-          data: {
-            loggedInUser,
-            authToken: response.data.authToken || response.data.token,
-            refreshToken: response.data.refreshToken
-          },
-          message: response.data.message || 'Success',
-          success: response.data.success !== false
-        };
-      } else {
-        console.error('Cannot find user data in response. Response keys:', Object.keys(response.data));
-        console.error('Full response:', response.data);
-        throw new Error('Invalid response structure from server. Please check backend API.');
-      }
-      
-      console.log('Processed authResponse:', authResponse);
-      console.log('Token from response:', authResponse.data.authToken);
-      
-      // Store tokens if provided
-      if (authResponse.data.authToken) {
-        console.log('Saving auth token to localStorage');
-        localStorage.setItem('authToken', authResponse.data.authToken);
-      } else {
-        console.warn('No token in signup response!');
-      }
-      
-      if (authResponse.data.refreshToken) {
-        console.log('Saving refresh token to localStorage');
-        localStorage.setItem('refreshToken', authResponse.data.refreshToken);
-      }
-      
-      console.log('Tokens after signup save:', {
-        authToken: localStorage.getItem('authToken'),
-        refreshToken: localStorage.getItem('refreshToken')
-      });
-      
-      return authResponse;
-    } catch (error) {
-      console.error('Sign up error:', error);
-      // Don't wrap the error, just throw it as is for better debugging
-      throw error;
+    const payload = {
+      name: data.fullName,
+      email: data.email,
+      password: data.password,
+      role: data.role,
+    };
+    const response = await api.post<Record<string, unknown>>(
+      API_CONFIG.AUTH.SIGN_UP,
+      payload
+    );
+
+    if (!response.data) {
+      throw new Error('Invalid response from server');
     }
+
+    // Backend may return HTTP 200 with success:false for business errors
+    if (response.data.success === false) {
+      throw new Error((response.data.message as string) || 'Sign up failed');
+    }
+
+    const authResponse = this.parseAuthResponse(response.data);
+
+    if (authResponse.data.authToken) {
+      localStorage.setItem('authToken', authResponse.data.authToken);
+    }
+    if (authResponse.data.refreshToken) {
+      localStorage.setItem('refreshToken', authResponse.data.refreshToken);
+    }
+
+    return authResponse;
   },
 
   /**
    * Sign in user
    */
   async signIn(data: SignInData): Promise<AuthResponse> {
-    try {
-      const response = await api.post<any>(
-        API_CONFIG.AUTH.SIGN_IN,
-        data
-      );
-      
-      console.log('Sign in raw response:', response);
-      console.log('Sign in response.data:', response.data);
-      console.log('Response structure check:', {
-        hasData: !!response.data,
-        hasDataProperty: !!(response.data as any)?.data,
-        hasLoggedInUser: !!(response.data as any)?.data?.loggedInUser,
-        directLoggedInUser: !!(response.data as any)?.loggedInUser,
-        isArray: Array.isArray((response.data as any)?.data?.loggedInUser || (response.data as any)?.loggedInUser),
-        keys: Object.keys(response.data || {}),
-        fullResponse: JSON.stringify(response.data, null, 2)
-      });
-      
-      // Validate response exists
-      if (!response.data) {
-        console.error('No data in response:', response);
-        throw new Error('Invalid response from server');
-      }
-      
-      let authResponse: AuthResponse;
-      
-      // Handle three possible response structures:
-      // 1. { data: { loggedInUser: {...}, authToken: ... } } - nested structure
-      // 2. { data: { loggedInUser: [{...}], authToken: ... } } - nested with array
-      // 3. { loggedInUser: {...} or [{...}], authToken: ... } - flat structure
-      
-      if (response.data.data && response.data.data.loggedInUser) {
-        // Nested structure (expected)
-        console.log('Using nested response structure');
-        const loggedInUser = Array.isArray(response.data.data.loggedInUser) 
-          ? response.data.data.loggedInUser[0] 
-          : response.data.data.loggedInUser;
-        
-        authResponse = {
-          ...response.data,
-          data: {
-            ...response.data.data,
-            loggedInUser
-          }
-        };
-      } else if (response.data.loggedInUser) {
-        // Flat structure - wrap it
-        console.log('Using flat response structure, wrapping it');
-        const loggedInUser = Array.isArray(response.data.loggedInUser) 
-          ? response.data.loggedInUser[0] 
-          : response.data.loggedInUser;
-        
-        authResponse = {
-          statusCode: response.data.statusCode || 200,
-          data: {
-            loggedInUser,
-            authToken: response.data.authToken || response.data.token,
-            refreshToken: response.data.refreshToken
-          },
-          message: response.data.message || 'Success',
-          success: response.data.success !== false
-        };
-      } else {
-        console.error('Cannot find user data in response. Response keys:', Object.keys(response.data));
-        console.error('Full response:', response.data);
-        throw new Error('Invalid response structure from server. Please check backend API.');
-      }
-      
-      console.log('Processed authResponse:', authResponse);
-      console.log('Token from response:', authResponse.data.authToken);
-      console.log('Refresh token from response:', authResponse.data.refreshToken);
-      
-      // Store tokens if provided
-      if (authResponse.data.authToken) {
-        console.log('Saving auth token to localStorage');
-        localStorage.setItem('authToken', authResponse.data.authToken);
-      } else {
-        console.warn('No token in response!');
-      }
-      
-      if (authResponse.data.refreshToken) {
-        console.log('Saving refresh token to localStorage');
-        localStorage.setItem('refreshToken', authResponse.data.refreshToken);
-      } else {
-        console.warn('No refresh token in response!');
-      }
-      
-      console.log('Tokens after save:', {
-        authToken: localStorage.getItem('authToken'),
-        refreshToken: localStorage.getItem('refreshToken')
-      });
-      
-      return authResponse;
-    } catch (error) {
-      console.error('Sign in error:', error);
-      // Don't wrap the error, just throw it as is for better debugging
-      throw error;
+    const response = await api.post<Record<string, unknown>>(
+      API_CONFIG.AUTH.SIGN_IN,
+      data
+    );
+
+    if (!response.data) {
+      throw new Error('Invalid response from server');
     }
+
+    // Backend may return HTTP 200 with success:false for business errors
+    if (response.data.success === false) {
+      throw new Error((response.data.message as string) || 'Sign in failed');
+    }
+
+    const authResponse = this.parseAuthResponse(response.data);
+
+    if (authResponse.data.authToken) {
+      localStorage.setItem('authToken', authResponse.data.authToken);
+    }
+    if (authResponse.data.refreshToken) {
+      localStorage.setItem('refreshToken', authResponse.data.refreshToken);
+    }
+
+    return authResponse;
   },
 
   /**
