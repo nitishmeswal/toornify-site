@@ -189,7 +189,7 @@ export default function Dashboard() {
   };
 
   const tournamentsJoined = tournaments.length;
-  const matchesPlayed = tournaments.reduce((acc: number, t: any) => acc + (t.matchesPlayed || 0), 0) || 48;
+  const matchesPlayed = tournaments.reduce((acc: number, t: any) => acc + (t.matchesPlayed || 0), 0);
   const winRate = 72;
   const currentRank = '#24';
 

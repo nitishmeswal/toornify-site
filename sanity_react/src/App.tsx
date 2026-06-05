@@ -78,6 +78,8 @@ function AppContent() {
               <Route path="/contact" element={<Contact />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/privacy" element={<Privacy />} />
+              <Route path="/roadmap" element={<ComingSoon title="Roadmap" />} />
+              <Route path="/docs" element={<ComingSoon title="Documentation" />} />
               <Route path="/sign-in" element={<SignIn />} />
               <Route path="/sign-up" element={<SignUp />} />
               <Route path="/auth/callback" element={<OAuthCallback />} />
