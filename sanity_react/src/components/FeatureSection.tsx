@@ -45,7 +45,7 @@ export default function FeatureSection() {
           viewport={{ once: true }}
           className="text-base lg:text-lg max-w-3xl mx-auto text-neutral-400 text-center leading-relaxed"
         >
-          Sanity Gaming covers every single aspect of esports community. Which a
+          Toornify covers every single aspect of the esports community. Which a
           gamer desires we aim to connect organizers with players.
         </motion.p>
       </div>

@@ -19,7 +19,7 @@ const CATEGORIES: Cat[] = [
       { q: "What is Toornify?", a: "Toornify is an all-in-one esports tournament platform that helps organizers create, manage and run professional tournaments while giving players and fans a great experience." },
       { q: "How do I create an account?", a: "Click 'Get Started' in the top right, sign up with your email or social account, complete a quick onboarding flow, and you're ready to go." },
       { q: "Is Toornify free to use?", a: "Yes — our Free plan lets you run small tournaments with up to 64 participants. Paid plans unlock advanced features like multi-stage brackets, payouts, and analytics." },
-      { q: "Do I need any gaming experience to join tournaments?", a: "No. Toornify hosts tournaments for all skill levels, from casual community events to professional leagues." },
+      { q: "Do I need any competitive experience to join tournaments?", a: "No. Toornify hosts tournaments for all skill levels, from casual community events to professional leagues." },
       { q: "What games are supported on Toornify?", a: "We support 18+ titles including Valorant, BGMI, Call of Duty, Free Fire, CS2, Dota 2, League of Legends, Apex Legends, and more." },
       { q: "Can I join tournaments as a team?", a: "Absolutely. Create or join a team, manage your roster, and register together for any team-based tournament." },
     ],

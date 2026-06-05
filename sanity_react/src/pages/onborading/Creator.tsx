@@ -344,7 +344,7 @@ export default function CreatorOnboarding() {
 
                         <div className="space-y-2">
                             <label className="text-sm font-medium">Niche</label>
-                            <Input placeholder="Gaming, Tech Reviews, etc." {...register("niche")} />
+                            <Input placeholder="Esports, Tech Reviews, etc." {...register("niche")} />
                         </div>
 
                         <div className="space-y-2">

@@ -338,7 +338,7 @@ export default function OrganiserOnboarding() {
                                 <SelectContent>
                                     <SelectItem value="individual">Individual Organizer</SelectItem>
                                     <SelectItem value="organization">Esports Organization</SelectItem>
-                                    <SelectItem value="cafe">Gaming Café</SelectItem>
+                                    <SelectItem value="cafe">Esports Café</SelectItem>
                                     <SelectItem value="club">College/School Club</SelectItem>
                                 </SelectContent>
                             </Select>

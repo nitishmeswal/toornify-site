@@ -60,11 +60,11 @@ export const newsService = {
   },
 
   /**
-   * Fetch gaming news
+   * Fetch esports news articles
    */
   async getGamingNews(limit: number = 10): Promise<NewsArticle[]> {
     return this.getNews({
-      query: 'gaming OR esports OR tournaments',
+      query: 'esports OR tournaments OR competitive',
       lang: 'en',
       limit,
       sortBy: 'publishedAt',
@@ -76,7 +76,7 @@ export const newsService = {
    */
   async getEsportsNews(limit: number = 10): Promise<NewsArticle[]> {
     return this.getNews({
-      query: 'esports OR competitive gaming',
+      query: 'esports OR competitive OR tournament',
       lang: 'en',
       limit,
       sortBy: 'publishedAt',

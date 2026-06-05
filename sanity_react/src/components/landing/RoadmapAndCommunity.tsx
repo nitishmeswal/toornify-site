@@ -67,7 +67,7 @@ const TESTIMONIALS = [
 const ORGS = [
   { name: "Team Insane",     icon: Swords },
   { name: "Gods Reborn",     icon: Crown },
-  { name: "Skylight Gaming", icon: Sparkles },
+  { name: "Skylight Esports", icon: Sparkles },
   { name: "Wolves Esports",  icon: Flame },
   { name: "Ruthless Army",   icon: ShieldCheck },
 ];

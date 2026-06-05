@@ -4,7 +4,7 @@ import gsap from "gsap";
 
 /**
  * Animated floating geometric shapes (cubes, triangles, dots)
- * for the dark gaming aesthetic background.
+ * for the dark esports aesthetic background.
  */
 export default function BackgroundParticles({ className }: { className?: string }) {
   const containerRef = useRef<HTMLDivElement | null>(null);

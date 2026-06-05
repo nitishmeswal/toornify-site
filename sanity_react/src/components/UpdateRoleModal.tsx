@@ -18,7 +18,7 @@ const roles = [
   {
     id: 'player',
     title: 'Player',
-    description: 'Compete in tournaments and build your gaming profile',
+    description: 'Compete in tournaments and build your esports profile',
     icon: Gamepad2,
     color: 'from-blue-500/20 to-blue-600/20',
     borderColor: 'border-blue-500/30 hover:border-blue-500/60',
@@ -27,7 +27,7 @@ const roles = [
   {
     id: 'organiser',
     title: 'Organiser',
-    description: 'Create tournaments and manage gaming events',
+    description: 'Create tournaments and manage esports events',
     icon: Users,
     color: 'from-purple-500/20 to-purple-600/20',
     borderColor: 'border-purple-500/30 hover:border-purple-500/60',
@@ -36,7 +36,7 @@ const roles = [
   {
     id: 'creator',
     title: 'Creator',
-    description: 'Share content and showcase your gaming talent',
+    description: 'Share content and showcase your esports talent',
     icon: Camera,
     color: 'from-pink-500/20 to-pink-600/20',
     borderColor: 'border-pink-500/30 hover:border-pink-500/60',

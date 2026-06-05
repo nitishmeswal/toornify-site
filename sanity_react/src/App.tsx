@@ -38,6 +38,8 @@ const OAuthCallback = lazy(() => import('@/pages/OAuthCallback').then(m => ({ de
 const Dashboard = lazy(() => import('@/pages/Dashboard'))
 const AdminPanel = lazy(() => import('@/pages/AdminPanel'))
 const Studio = lazy(() => import('@/pages/Studio'))
+const Terms = lazy(() => import('@/pages/Terms'))
+const Privacy = lazy(() => import('@/pages/Privacy'))
 
 function AppContent() {
   // Track page views on route changes
@@ -74,6 +76,8 @@ function AppContent() {
               <Route path="/how-it-works" element={<HowItWorks />} />
               <Route path="/faq" element={<FAQ />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/privacy" element={<Privacy />} />
               <Route path="/sign-in" element={<SignIn />} />
               <Route path="/sign-up" element={<SignUp />} />
               <Route path="/auth/callback" element={<OAuthCallback />} />
