@@ -32,7 +32,7 @@ export default function SignIn() {
   // Redirect if already authenticated
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
-      const from = (location.state as any)?.from?.pathname || "/";
+      const from = (location.state as any)?.from?.pathname || "/dashboard";
       navigate(from, { replace: true });
     }
   }, [isAuthenticated, isLoading, navigate, location]);
@@ -60,7 +60,7 @@ export default function SignIn() {
     try {
       setError(null);
       await signIn(data.email, data.password);
-      const from = (location.state as any)?.from?.pathname || "/";
+      const from = (location.state as any)?.from?.pathname || "/dashboard";
       navigate(from, { replace: true });
     } catch (err: any) {
       console.error("Sign in error:", err);
