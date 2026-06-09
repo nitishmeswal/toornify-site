@@ -20,7 +20,7 @@ const onboardingSteps = {
         { id: 'personal', title: 'Personal Info', icon: FileText, description: 'Basic details' },
         { id: 'contact', title: 'Contact', icon: Briefcase, description: 'Email, Phone & Socials' },
         { id: 'education', title: 'Education', icon: Building2, description: 'Academic & Org' },
-        { id: 'games', title: 'Game Profiles', icon: Gamepad2, description: 'Your gaming portfolio' },
+        { id: 'games', title: 'Game Profiles', icon: Gamepad2, description: 'Your esports portfolio' },
         { id: 'other', title: 'Other Details', icon: CheckCircle, description: 'Role & Review' },
     ],
     organiser: [

@@ -46,7 +46,7 @@ const REACH_OUT = [
 const SUPPORT_STATS = [
   { icon: Clock, title: "24/7 Support",    desc: "Our team is available around the clock to assist you." },
   { icon: Zap, title: "Fast Response",     desc: "We respond to all inquiries within 24 hours." },
-  { icon: GraduationCap, title: "Expert Help", desc: "Get help from experts and gaming experts." },
+  { icon: GraduationCap, title: "Expert Help", desc: "Get help from esports and platform experts." },
   { icon: Heart, title: "Community First",  desc: "We value every player, organizer and partner." },
 ];
 
@@ -258,14 +258,14 @@ export default function Contact() {
                     <div className="text-[12px] text-gray-400 leading-relaxed mt-0.5">
                       123 Esports Way, Level 7
                       <br />
-                      Gaming City, CA 90210
+                      Esports City, CA 90210
                       <br />
                       United States
                     </div>
                   </div>
                 </div>
                 <a
-                  href="https://maps.google.com/?q=Gaming+City+CA"
+                  href="https://maps.google.com/?q=Esports+City+CA"
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-1.5 text-[12px] font-bold text-purple-300 hover:text-purple-200 transition-colors"

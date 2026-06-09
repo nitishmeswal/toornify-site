@@ -22,7 +22,7 @@ interface NewsItem {
 const iconMap: Record<string, typeof Newspaper> = {
   all: Newspaper,
   esports: Trophy,
-  gaming: Gamepad2,
+  general: Gamepad2,
   tournament: TrendingUp,
   tournaments: TrendingUp,
   update: Newspaper,
@@ -53,7 +53,7 @@ const deriveDynamicCategory = (post: SanityNewsPost): string => {
   if (/(esports|esport|pro team|competitive|scrim|ranked)/.test(haystack)) return 'esports';
   if (/(patch|update|release notes|hotfix|maintenance|version)/.test(haystack)) return 'update';
   if (/(community|creator|discord|event|fan|streamer)/.test(haystack)) return 'community';
-  return 'gaming';
+  return 'general';
 };
 
 export function News() {
@@ -150,10 +150,10 @@ export function News() {
           className="mb-12"
         >
           <h1 className="text-4xl md:text-4xl lg:text-5xl font-bold pb-2 text-white drop-shadow-lg uppercase tracking-wider">
-            Gaming News
+            Esports News
           </h1>
           <p className="text-gray-200 text-lg max-w-2xl font-medium">
-            Stay updated with the latest gaming and esports news from around the world
+            Stay updated with the latest esports news from around the world
           </p>
         </motion.div>
 
@@ -241,7 +241,7 @@ export function News() {
                         crossOrigin="anonymous"
                         referrerPolicy="no-referrer"
                         onError={(e) => {
-                          e.currentTarget.src = 'https://via.placeholder.com/400x200?text=Gaming+News';
+                          e.currentTarget.src = 'https://via.placeholder.com/400x200?text=Esports+News';
                         }}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#18152a] to-transparent opacity-60" />

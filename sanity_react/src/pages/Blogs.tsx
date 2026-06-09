@@ -27,7 +27,7 @@ const ARTICLES: Article[] = [
   {
     id: 1,
     title: "The Future of Esports Tournaments: Trends to Watch in 2025",
-    excerpt: "Explore the key trends shaping the future of esports gaming and how Toornify is leading the way.",
+    excerpt: "Explore the key trends shaping the future of esports and how Toornify is leading the way.",
     date: "May 14, 2025",
     category: "Featured",
     image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1400&q=80",
@@ -138,7 +138,7 @@ export function Blogs() {
                 </span>
               </motion.h1>
               <p className="text-gray-400 text-base max-w-md mb-6">
-                Tips, updates and stories from the Toornify community and the world of competitive gaming.
+                Tips, updates and stories from the Toornify community and the world of competitive esports.
               </p>
 
               {/* search */}

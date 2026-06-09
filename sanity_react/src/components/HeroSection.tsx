@@ -117,7 +117,7 @@ export default function HeroSection() {
             transition={{ duration: 0.5, delay: 0.4 }}
             className="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto"
           >
-            Create, manage, and compete in tournaments with ease. Join the next generation of competitive gaming.
+            Create, manage, and compete in tournaments with ease. Join the next generation of competitive esports.
           </motion.p>
 
           {/* Email Form or CTA Buttons */}

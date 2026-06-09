@@ -27,15 +27,15 @@ const SEO: React.FC<SEOProps> = ({
   const location = useLocation();
   const baseUrl = 'https://sanity-react-one.vercel.app';
   
-  const siteTitle = 'Toornify - Gaming Tournaments & Esports Platform';
-  const defaultDescription = 'Join competitive gaming tournaments, create brackets, manage teams, and compete in esports events. The ultimate platform for gamers and tournament organizers.';
+  const siteTitle = 'Toornify - Esports Tournaments & Competitive Platform';
+  const defaultDescription = 'Join competitive esports tournaments, create brackets, manage teams, and compete in events. The ultimate platform for players and tournament organizers.';
   const defaultImage = `${baseUrl}/og-image.jpg`;
   
   const pageTitle = title ? `${title} | Toornify` : siteTitle;
   const pageDescription = description || defaultDescription;
   const pageImage = image || defaultImage;
   const pageUrl = url || `${baseUrl}${location.pathname}`;
-  const pageKeywords = keywords || 'gaming tournaments, esports, brackets, gaming platform, competitive gaming';
+  const pageKeywords = keywords || 'esports tournaments, competitive esports, brackets, esports platform, tournament organizer';
 
   useEffect(() => {
     // Update document title

@@ -429,7 +429,7 @@ function Hero() {
             { v: "24K+", l: "Tournaments Hosted", icon: Trophy, accent: "from-purple-500/30 to-fuchsia-500/20" },
             { v: "850K",  l: "Players Registered", icon: Users, accent: "from-blue-500/30 to-purple-500/20" },
             { v: "180",   l: "Live Right Now",     icon: Flame, accent: "from-red-500/30 to-orange-500/20" },
-            { v: "40+",   l: "Gaming Communities", icon: ShieldCheck, accent: "from-emerald-500/30 to-cyan-500/20" },
+            { v: "40+",   l: "Esports Communities", icon: ShieldCheck, accent: "from-emerald-500/30 to-cyan-500/20" },
           ].map((s, i) => (
             <motion.div
               key={s.l}
@@ -689,7 +689,7 @@ function EmptySide({ label }: { label: string }) {
 
 const TOP_ORGANIZERS: { name: string; tournaments: number; icon: any }[] = [
   { name: "Toornify Esports",  tournaments: 12, icon: Trophy },
-  { name: "Skyline Gaming",    tournaments: 8,  icon: Flame },
+  { name: "Skyline Esports",    tournaments: 8,  icon: Flame },
   { name: "Revenant Esports",  tournaments: 6,  icon: ShieldCheck },
   { name: "Wolves Esports",    tournaments: 5,  icon: Gamepad2 },
   { name: "Apex Esports",      tournaments: 4,  icon: Users },

@@ -911,7 +911,7 @@ export function CreateTournamentModal({ isOpen, onClose, onSubmit }: CreateTourn
                               type="text"
                               value={prize.customPrize || ''}
                               onChange={(e) => updatePrize(index, 'customPrize', e.target.value)}
-                              placeholder="e.g., Amazon voucher, Gaming Keyboard, Gift Hamper"
+                              placeholder="e.g., Amazon voucher, Esports Keyboard, Gift Hamper"
                               className="w-full px-3 py-2 bg-[#1a1625] border border-[#3d3551] rounded text-white text-sm focus:outline-none focus:border-purple-500"
                             />
                           </div>

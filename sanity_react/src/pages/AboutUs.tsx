@@ -211,7 +211,7 @@ export default function AboutUs() {
           {/* TEAM */}
           <h2 className="text-2xl lg:text-3xl font-black text-white tracking-tight mb-2">The Team</h2>
           <p className="text-gray-400 text-[14px] mb-7 max-w-xl">
-            A passionate team of gamers, developers, and dreamers building the future of competitive gaming.
+            A passionate team of esports enthusiasts, developers, and dreamers building the future of competitive esports.
           </p>
           <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-14">
             {TEAM.map((m, i) => (

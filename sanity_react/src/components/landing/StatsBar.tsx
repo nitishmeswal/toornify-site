@@ -14,7 +14,7 @@ const DEFAULT_STATS: StatItem[] = [
   { icon: Trophy, value: 0, label: "Matches Played", format: (n: number) => n >= 1000 ? `${Math.round(n / 1000)}K+` : `${Math.round(n)}+` },
   { icon: Calendar, value: 0, label: "Tournaments Hosted", format: (n: number) => n >= 1000 ? `${Math.round(n / 1000)}K+` : `${Math.round(n)}+` },
   { icon: Users, value: 0, label: "Players Registered", format: (n: number) => n >= 1000 ? `${Math.round(n / 1000)}K+` : `${Math.round(n)}+` },
-  { icon: Globe2, value: 40, label: "Gaming Communities", format: (n: number) => `${Math.round(n)}+` },
+  { icon: Globe2, value: 40, label: "Esports Communities", format: (n: number) => `${Math.round(n)}+` },
   { icon: Gamepad2, value: 0, label: "Supported Games", format: (n: number) => `${Math.round(n)}` },
 ];
 
@@ -42,7 +42,7 @@ export default function StatsBar() {
           { icon: Trophy, value: tournamentCount * 8, label: "Matches Played", format: (n: number) => n >= 1000 ? `${Math.round(n / 1000)}K+` : `${Math.round(n)}+` },
           { icon: Calendar, value: tournamentCount, label: "Tournaments Hosted", format: (n: number) => n >= 1000 ? `${Math.round(n / 1000)}K+` : `${Math.round(n)}+` },
           { icon: Users, value: playerCount, label: "Players Registered", format: (n: number) => n >= 1000 ? `${Math.round(n / 1000)}K+` : `${Math.round(n)}+` },
-          { icon: Globe2, value: 40, label: "Gaming Communities", format: (n: number) => `${Math.round(n)}+` },
+          { icon: Globe2, value: 40, label: "Esports Communities", format: (n: number) => `${Math.round(n)}+` },
           { icon: Gamepad2, value: gameCount, label: "Supported Games", format: (n: number) => `${Math.round(n)}` },
         ]);
       } catch (err) {
