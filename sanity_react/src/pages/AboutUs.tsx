@@ -39,11 +39,14 @@ const VALUES = [
 ];
 
 const TEAM = [
-  { name: "Arjun Patel", role: "Co-Founder & CEO",       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=arjun&backgroundColor=7c3aed" },
-  { name: "Riya Shah",   role: "Co-Founder & CTO",       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=riya&backgroundColor=a855f7" },
-  { name: "Karan Singh", role: "Head of Esports",        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=karan&backgroundColor=c084fc" },
-  { name: "Neha Verma",  role: "Head of Design",         avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=neha&backgroundColor=8b5cf6" },
-  { name: "Aditya Rao",  role: "Head of Community",      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=aditya&backgroundColor=6d28d9" },
+  { name: "Aniket Pandey",    role: "CEO",                    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=aniket&backgroundColor=7c3aed" },
+  { name: "Anant Singh",      role: "CTO",                    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=anant&backgroundColor=a855f7" },
+  { name: "Jignesh Kapadia",  role: "Head of Partnerships",   avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=jignesh&backgroundColor=c084fc" },
+];
+
+const MENTORS = [
+  { name: "Rounaq Mustafa", role: "Strategic Advisor, Startup Ecosystem", bio: "Head of PW School of Startups · Former CEO of IIM Lucknow Incubation Center" },
+  { name: "Lucien Parsons",  role: "Strategic Advisor, Esports Industry",  bio: "Co-founder of ZeniMax Online Studios · Former Global Partner Leader for Games at AWS" },
 ];
 
 type TabKey = "mission" | "join";
@@ -178,7 +181,7 @@ export default function AboutUs() {
             <div>
               <h2 className="text-2xl lg:text-3xl font-black text-white tracking-tight mb-4">Our Mission</h2>
               <p className="text-gray-400 text-[14px] leading-relaxed">
-                To make esports tournaments accessible to everyone. Whether you're a casual gamer, a competitive player, or an organizer, Toornify provides the tools you need to create, manage and experience esports like never before.
+                To make esports tournaments accessible to everyone. Whether you're a casual player, a competitive athlete, or an organizer, Toornify provides the tools you need to create, manage and experience esports like never before.
               </p>
             </div>
             <VideoCard />
@@ -211,11 +214,33 @@ export default function AboutUs() {
           {/* TEAM */}
           <h2 className="text-2xl lg:text-3xl font-black text-white tracking-tight mb-2">The Team</h2>
           <p className="text-gray-400 text-[14px] mb-7 max-w-xl">
-            A passionate team of esports enthusiasts, developers, and dreamers building the future of competitive esports.
+            A passionate team of esports veterans building the unified infrastructure for competitive esports in Asia.
           </p>
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-14">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 mb-10">
             {TEAM.map((m, i) => (
               <TeamCard key={m.name} member={m} index={i} />
+            ))}
+          </div>
+
+          {/* MENTORS */}
+          <h2 className="text-2xl lg:text-3xl font-black text-white tracking-tight mb-2">Our Mentors</h2>
+          <p className="text-gray-400 text-[14px] mb-7 max-w-xl">
+            Guided by industry leaders with decades of experience in startups and esports.
+          </p>
+          <div className="grid sm:grid-cols-2 gap-4 mb-14">
+            {MENTORS.map((m, i) => (
+              <motion.div
+                key={m.name}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+                className="group rounded-2xl bg-white/[0.03] ring-1 ring-inset ring-white/8 hover:ring-purple-400/30 p-5 transition-all"
+              >
+                <p className="text-[15px] font-bold text-white mb-1">{m.name}</p>
+                <p className="text-xs text-purple-300 font-medium mb-2">{m.role}</p>
+                <p className="text-[12px] text-gray-400 leading-relaxed">{m.bio}</p>
+              </motion.div>
             ))}
           </div>
 

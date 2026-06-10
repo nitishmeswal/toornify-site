@@ -14,7 +14,7 @@ export default function FeatureSection() {
     {
       title: "Join Our Discord Community",
       description:
-        "Connect with fellow gamers, stay updated and participate in exclusive events by joining our Discord community.",
+        "Connect with fellow players, stay updated and participate in exclusive events by joining our Discord community.",
       skeleton: <SkeletonDiscord />,
     },
     {
@@ -45,8 +45,8 @@ export default function FeatureSection() {
           viewport={{ once: true }}
           className="text-base lg:text-lg max-w-3xl mx-auto text-neutral-400 text-center leading-relaxed"
         >
-          Toornify covers every single aspect of the esports community. Which a
-          gamer desires we aim to connect organizers with players.
+          Toornify covers every single aspect of the esports community. Everything
+          a player desires — we aim to connect organizers with players.
         </motion.p>
       </div>
 

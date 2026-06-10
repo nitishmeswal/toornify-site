@@ -87,7 +87,7 @@ export default function PlatformShowcase() {
                     />
                   )}
                   <Icon className="relative w-4 h-4" />
-                  <span className="relative">{t.label}</span>
+                  <span className="relative hidden sm:inline">{t.label}</span>
                 </button>
               );
             })}

@@ -62,7 +62,7 @@ export const newsService = {
   /**
    * Fetch esports news articles
    */
-  async getGamingNews(limit: number = 10): Promise<NewsArticle[]> {
+  async getEsportsLatest(limit: number = 10): Promise<NewsArticle[]> {
     return this.getNews({
       query: 'esports OR tournaments OR bracket OR league',
       lang: 'en',

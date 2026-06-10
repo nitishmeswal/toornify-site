@@ -4,7 +4,7 @@ import { Loader } from '@/components/ui/Loader';
 import {
   Trophy, Users, BarChart3, Star, Flame,
   Home, Swords, Shield, Bell, MessageSquare,
-  UserCircle, Settings, LogOut, Search, ChevronRight, Plus,
+  UserCircle, Settings, LogOut, Search, ChevronRight, Plus, Menu, X,
 } from 'lucide-react';
 import { tournamentService } from '@/lib/services';
 import { getImageUrl } from '@/lib/utils';
@@ -63,7 +63,7 @@ const MAIN_NAV = [
   { label: 'Tournaments', icon: Trophy, href: '/tournaments' },
   { label: 'Matches', icon: Swords, href: '/bracket' },
   { label: 'Teams', icon: Shield, href: '/teams' },
-  { label: 'Rankings', icon: BarChart3, href: '/news' },
+  { label: 'Rankings', icon: BarChart3, href: '/rankings' },
 ];
 
 const SOCIAL_NAV = [
@@ -122,6 +122,7 @@ export default function Dashboard() {
   const [tournaments, setTournaments] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Derived data — in production these would come from dedicated endpoints
   const [upcomingMatches, setUpcomingMatches] = useState<UpcomingMatch[]>([]);
@@ -204,7 +205,95 @@ export default function Dashboard() {
   return (
     <div className="flex min-h-screen bg-[#0b0a12] text-white">
       {/* ============================================================ */}
-      {/*  SIDEBAR                                                      */}
+      {/*  MOBILE SIDEBAR OVERLAY                                       */}
+      {/* ============================================================ */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
+          <aside className="absolute inset-y-0 left-0 w-[280px] flex flex-col border-r border-white/5 bg-[#0f0d18] shadow-2xl animate-in slide-in-from-left duration-200">
+            <div className="flex items-center justify-between px-6 h-20 border-b border-white/5">
+              <Link to="/" className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#a855f7] via-[#7c3aed] to-[#3b82f6] flex items-center justify-center shadow-lg shadow-purple-500/30">
+                  <span className="text-white font-black text-lg">T</span>
+                </div>
+                <span className="text-xl font-bold text-white tracking-tight">Toornify</span>
+              </Link>
+              <button onClick={() => setMobileMenuOpen(false)} className="p-2 text-gray-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
+              <p className="px-3 mb-2 text-[10px] font-bold uppercase tracking-widest text-gray-500">Main</p>
+              {MAIN_NAV.map((item) => {
+                const Icon = item.icon;
+                const active = location.pathname === item.href;
+                return (
+                  <Link
+                    key={item.label}
+                    to={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                      active
+                        ? 'bg-gradient-to-r from-purple-600/20 to-blue-600/10 text-white border border-purple-500/20'
+                        : 'text-gray-400 hover:text-white hover:bg-white/5'
+                    }`}
+                  >
+                    <Icon className="w-[18px] h-[18px]" />
+                    {item.label}
+                  </Link>
+                );
+              })}
+              <p className="px-3 mt-6 mb-2 text-[10px] font-bold uppercase tracking-widest text-gray-500">Social</p>
+              {SOCIAL_NAV.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.label}
+                    to={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition-all"
+                  >
+                    <span className="flex items-center gap-3">
+                      <Icon className="w-[18px] h-[18px]" />
+                      {item.label}
+                    </span>
+                    {item.badge && (
+                      <span className="min-w-[22px] h-[22px] flex items-center justify-center rounded-full bg-purple-600 text-[11px] font-bold text-white px-1.5">
+                        {item.badge}
+                      </span>
+                    )}
+                  </Link>
+                );
+              })}
+              <p className="px-3 mt-6 mb-2 text-[10px] font-bold uppercase tracking-widest text-gray-500">Account</p>
+              {ACCOUNT_NAV.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.label}
+                    to={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition-all"
+                  >
+                    <Icon className="w-[18px] h-[18px]" />
+                    {item.label}
+                  </Link>
+                );
+              })}
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:text-red-400 hover:bg-red-500/5 transition-all"
+              >
+                <LogOut className="w-[18px] h-[18px]" />
+                Log out
+              </button>
+            </nav>
+          </aside>
+        </div>
+      )}
+
+      {/* ============================================================ */}
+      {/*  SIDEBAR (desktop)                                            */}
       {/* ============================================================ */}
       <aside className="hidden lg:flex flex-col w-[260px] border-r border-white/5 bg-[#0f0d18]/80 backdrop-blur-md">
         {/* Logo */}
@@ -289,7 +378,14 @@ export default function Dashboard() {
       {/* ============================================================ */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top bar */}
-        <header className="h-20 border-b border-white/5 flex items-center justify-between px-6 lg:px-8 bg-[#0f0d18]/60 backdrop-blur-md">
+        <header className="h-16 lg:h-20 border-b border-white/5 flex items-center justify-between px-4 lg:px-8 bg-[#0f0d18]/60 backdrop-blur-md">
+          {/* Mobile menu button */}
+          <button
+            onClick={() => setMobileMenuOpen(true)}
+            className="lg:hidden p-2 -ml-1 text-gray-400 hover:text-white"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
           <div className="flex items-center gap-3 w-full max-w-md">
             <Search className="w-4 h-4 text-gray-500" />
             <input
@@ -472,7 +568,7 @@ export default function Dashboard() {
                       <h2 className="text-lg font-semibold">Leaderboard</h2>
                       <p className="text-xs text-gray-500">This Season</p>
                     </div>
-                    <Link to="/news" className="text-xs text-purple-400 hover:text-purple-300 flex items-center gap-1">
+                    <Link to="/rankings" className="text-xs text-purple-400 hover:text-purple-300 flex items-center gap-1">
                       View All <ChevronRight className="w-3 h-3" />
                     </Link>
                   </div>
