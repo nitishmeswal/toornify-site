@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import { lazy, Suspense } from 'react'
 import { AuthProvider } from '@/context/AuthContext'
 import { SocketProvider } from '@/context/SocketContext'
@@ -171,9 +171,9 @@ function ComingSoon({ title }: { title: string }) {
         <p className="text-gray-400 text-sm mb-6">
           We're working on this. Check back soon.
         </p>
-        <a href="/" className="inline-flex items-center gap-2 text-sm font-medium text-purple-400 hover:text-purple-300 transition-colors">
+        <Link to="/" className="inline-flex items-center gap-2 text-sm font-medium text-purple-400 hover:text-purple-300 transition-colors">
           ← Back to Home
-        </a>
+        </Link>
       </div>
     </div>
   );
