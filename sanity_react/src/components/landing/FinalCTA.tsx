@@ -60,13 +60,13 @@ export default function FinalCTA() {
             {/* copy */}
             <div className="text-center md:text-left">
               <p className="text-[11px] uppercase tracking-[0.3em] font-bold text-purple-300 mb-2">
-                Ready to start your esports journey?
+                Join the Movement
               </p>
               <h2 className="text-3xl lg:text-[2.4rem] font-black tracking-tight text-white leading-tight mb-2">
-                Join thousands of players and organizers
+                Empowering 1M+ youth participants
                 <br className="hidden lg:block" />{" "}
                 <span className="bg-gradient-to-r from-[#a855f7] via-[#c084fc] to-[#ec4899] bg-clip-text text-transparent">
-                  building the future of esports.
+                  across Asia's esports ecosystem.
                 </span>
               </h2>
             </div>

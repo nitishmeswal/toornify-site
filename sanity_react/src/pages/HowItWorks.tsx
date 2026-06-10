@@ -84,7 +84,7 @@ export default function HowItWorks() {
                 transition={{ duration: 0.5, delay: 0.25 }}
                 className="text-gray-400 text-base max-w-md"
               >
-                Whether you're an organizer or a gamer, Toornify makes esports effortless.
+                Whether you're an organizer or a player, Toornify makes esports effortless.
               </motion.p>
             </div>
 
@@ -177,7 +177,7 @@ export default function HowItWorks() {
                     Ready to create your first tournament?
                   </h3>
                   <p className="text-gray-400 text-sm">
-                    Join thousands of organizers and gamers building the future of esports.
+                    Join thousands of organizers and players building the future of esports.
                   </p>
                 </div>
               </div>

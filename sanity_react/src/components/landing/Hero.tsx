@@ -28,7 +28,7 @@ export default function Hero() {
           >
             <span className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
             <span className="text-xs font-semibold uppercase tracking-widest text-purple-200">
-              #1 All-in-One Esports Tournament Platform
+              Asia's Go-To Esports Platform
             </span>
           </motion.div>
 
@@ -38,10 +38,10 @@ export default function Hero() {
             transition={{ duration: 0.7, delay: 0.1 }}
             className="text-[2.5rem] sm:text-[3.4rem] lg:text-[5rem] font-black leading-[1.02] tracking-tight"
           >
-            <span className="block text-white">Create.</span>
-            <span className="block text-white">Compete.</span>
+            <span className="block text-white">Play Differently.</span>
+            <span className="block text-white">Win</span>
             <span className="block bg-gradient-to-r from-[#a855f7] via-[#c084fc] to-[#7c3aed] bg-clip-text text-transparent">
-              Conquer.
+              Exceptionally.
             </span>
           </motion.h1>
 
@@ -51,7 +51,7 @@ export default function Hero() {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="mt-5 sm:mt-7 text-sm sm:text-[1.1rem] text-gray-400 max-w-lg"
           >
-            The fastest and easiest way to create, manage, and play esports tournaments.
+            The unified platform to create, discover, and compete in esports tournaments. Connecting organizers, players, and brands within one ecosystem.
           </motion.p>
 
           <motion.div
@@ -96,7 +96,7 @@ export default function Hero() {
               ))}
             </div>
             <p className="text-sm text-gray-400">
-              Join <span className="text-white font-semibold">150K+</span> gamers & organizers worldwide
+              Join <span className="text-white font-semibold">150K+</span> players & organizers worldwide
             </p>
           </motion.div>
         </div>

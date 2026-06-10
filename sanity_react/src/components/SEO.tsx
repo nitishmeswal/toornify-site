@@ -25,10 +25,10 @@ const SEO: React.FC<SEOProps> = ({
   modifiedTime,
 }) => {
   const location = useLocation();
-  const baseUrl = 'https://sanity-react-one.vercel.app';
+  const baseUrl = 'https://toornify-site.vercel.app';
   
-  const siteTitle = 'Toornify - Esports Tournaments & Competitive Platform';
-  const defaultDescription = 'Join competitive esports tournaments, create brackets, manage teams, and compete in events. The ultimate platform for players and tournament organizers.';
+  const siteTitle = 'Toornify - Asia\'s Go-To Esports Platform';
+  const defaultDescription = 'Play Differently, Win Exceptionally. The unified platform to create, discover, and compete in esports tournaments. Connecting organizers, players, and brands.';
   const defaultImage = `${baseUrl}/og-image.jpg`;
   
   const pageTitle = title ? `${title} | Toornify` : siteTitle;

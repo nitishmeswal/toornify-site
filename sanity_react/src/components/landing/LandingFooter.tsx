@@ -64,7 +64,7 @@ export default function LandingFooter() {
           </div>
 
           <p className="text-[12px] text-gray-500 leading-relaxed mb-5">
-            All-in-one platform to create, manage & play esports tournaments.
+            Asia's go-to esports platform. Play differently, win exceptionally.
           </p>
 
           {/* 2-col compact link grid (drop "Legal" on mobile — keep terms/privacy in copyright row) */}
@@ -107,7 +107,7 @@ export default function LandingFooter() {
                 <span className="text-xl font-bold text-white">Toornify</span>
               </Link>
               <p className="text-sm text-gray-500 leading-relaxed max-w-xs">
-                The all-in-one platform to create, manage and play esports tournaments.
+                Asia's go-to esports platform. Play differently, win exceptionally.
               </p>
               <div className="flex items-center gap-3 mt-5">
                 {[Twitter, Instagram, Youtube, Linkedin].map((Icon, i) => (
